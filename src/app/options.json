@@ -1,0 +1,30 @@
+{
+  "airports": [
+    {
+      "icao": "EDDB",
+      "runways": ["06L", "06R", "24L", "24R"]
+    },
+    {
+      "icao": "EDDH",
+      "runways": ["05", "23", "15", "33"]
+    },
+    {
+      "icao": "EDDW",
+      "runways": ["09", "27"]
+    },
+    {
+      "icao": "EDDV",
+      "runways": ["09L", "09R", "27L", "27R"]
+    }
+  ],
+  "contaminants": {
+    "6": ["DRY"],
+    "5": ["WET", "FROST", "DRY SNOW (less than 3mm)", "WET SNOW (less than 3mm)", "SLUSH (less than 3mm)"],
+    "4": ["SPECIALLY PREPARED WINTER RUNWAY", "COMPACTED SNOW (OAT lower than -15°C)"],
+    "3": ["SLIPPERY WET", "DRY SNOW ON TOP OF COMPACTED SNOW", "WET SNOW ON TOP OF COMPACTED SNOW",
+      "DRY SNOW (more than 3mm)", "WET SNOW (more than 3mm)", "COMPACTED SNOW (OAT higher than -15°C)"],
+    "2": ["STANDING WATER (more than 3mm)", "SLUSH (more than 3mm)"],
+    "1": ["ICE"],
+    "0": ["WET ICE", "WATER ON TOP OF COMPACTED SNOW", "DRY SNOW ON TOP OF ICE", "WET SNOW ON TOP OF ICE"]
+  }
+}
