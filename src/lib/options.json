@@ -1,22 +1,10 @@
 {
-  "airports": [
-    {
-      "icao": "EDDB",
-      "runways": ["06L", "06R", "24L", "24R"]
-    },
-    {
-      "icao": "EDDH",
-      "runways": ["05", "23", "15", "33"]
-    },
-    {
-      "icao": "EDDW",
-      "runways": ["09", "27"]
-    },
-    {
-      "icao": "EDDV",
-      "runways": ["09L", "09R", "27L", "27R"]
-    }
-  ],
+  "airports": {
+    "EDDB": {"runways": ["06L", "06R", "24L", "24R"]},
+    "EDDH": {"runways": ["23", "33", "05", "15"]},
+    "EDDV": {"runways": ["27L", "27R", "09R", "09L"]},
+    "EDDW": {"runways": ["09", "27"]}
+  },
   "contaminants": {
     "6": ["DRY"],
     "5": ["WET", "FROST", "DRY SNOW (less than 3mm)", "WET SNOW (less than 3mm)", "SLUSH (less than 3mm)"],
