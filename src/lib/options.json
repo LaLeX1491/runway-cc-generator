@@ -1,9 +1,9 @@
 {
   "airports": {
-    "EDDB": {"runways": ["06L", "06R", "24L", "24R"]},
-    "EDDH": {"runways": ["23", "33", "05", "15"]},
-    "EDDV": {"runways": ["27L", "27R", "09R", "09L"]},
-    "EDDW": {"runways": ["09", "27"]}
+    "EDDB": {"runways": ["24L", "24R"]},
+    "EDDH": {"runways": ["23", "33"]},
+    "EDDV": {"runways": ["27L", "27R"]},
+    "EDDW": {"runways": ["27"]}
   },
   "contaminants": {
     "6": ["DRY"],
