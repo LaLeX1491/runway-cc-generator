@@ -7,58 +7,105 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox";
-import options from "@/lib/options.json";
-import { Options } from "@/lib/types";
-import { useMemo, useState } from "react";
-import Runway from '@/components/Runway';
-import { Button } from '@/components/ui/button';
-import { getOppositeRunway } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { RefreshCw } from 'lucide-react';
-
-type ComboboxItemType = {
-  value: string;
-  label: string;
-};
+import {useState} from "react";
+import {CheckIcon, CopyIcon, RefreshCw} from "lucide-react";
+import { AIRPORTS } from "@/lib/data";
+import {clsx} from 'clsx';
+import {useConditionCode} from '@/context/ConditionCodeProvider';
+import {AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger} from '@/components/ui/alert-dialog';
+import RunwayForm from '@/components/RunwayForm';
+import {Badge} from '@/components/ui/badge';
+import ccTableImage from "../../public/cc-table.png";
+import Image from 'next/image';
+import {Button} from '@/components/ui/button';
+import {Separator, SeparatorWithLabel} from '@/components/ui/separator';
+import SituationalAwarenessSelector from '@/components/SituationalAwarenessSelector';
 
 export default function Page() {
-  const [airport, setAirport] = useState<string>("");
-  const [runways, setRunways] = useState<string[]>([]);
   const [rotation, setRotation] = useState(0);
+  const [copied, setCopied] = useState<boolean>(false);
 
-  const airports = (options satisfies Options).airports;
+  const { setAirport, activeAirport, activeRunways, changeRunways} = useConditionCode();
 
-  const swapRunways = () => {
-    const newRunways = runways.map(r => getOppositeRunway(r));
-    setRunways(newRunways);
-    setRotation(prev => prev + 360);
-  };
+  const copyToClipboard = () => {
+    setCopied(true);
+    navigator.clipboard.writeText("XX");
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  }
 
-  const items: ComboboxItemType[] = useMemo(
-    () =>
-      Object.keys(airports).map((icao) => ({
-        value: icao,
-        label: icao,
-      })),
-    [airports]
-  );
+  const airportItems = AIRPORTS.map(a => ({ value: a.icao, label: a.icao }));
 
   return (
-    <main>
-      {/* Airport selection */}
+    <main className="pb-5">
+      <section className="flex items-center flex-col mb-5">
+        <h1 className="block">Output</h1>
+        <div className="w-1/2">
+          <span className="block mb-1 text-foreground font-bold">SNOWTAM</span>
+          <div className="flex justify-between rounded-md bg-gray-200 w-full p-2">
+            <code className="block">XX</code>
+            <div className="relative flex items-center gap-2">
+              <CopyIcon
+                onClick={copyToClipboard}
+                className={clsx(
+                  "cursor-pointer transition-all duration-200",
+                  copied
+                    ? "opacity-0 scale-75 pointer-events-none"
+                    : "opacity-100 scale-100"
+                )}
+              />
+
+              <CheckIcon
+                className={clsx(
+                  "absolute transition-all duration-200 pointer-events-none",
+                  copied
+                    ? "opacity-100 scale-100"
+                    : "opacity-0 scale-75"
+                )}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="w-1/2">
+          <span className="block mb-1 text-foreground font-bold">ATIS-REMARK</span>
+          <div className="flex justify-between rounded-md bg-gray-200 w-full p-2">
+            <code className="block">XX</code>
+            <div className="relative flex items-center gap-2">
+              <CopyIcon
+                onClick={copyToClipboard}
+                className={clsx(
+                  "cursor-pointer transition-all duration-200",
+                  copied
+                    ? "opacity-0 scale-75 pointer-events-none"
+                    : "opacity-100 scale-100"
+                )}
+              />
+
+              <CheckIcon
+                className={clsx(
+                  "absolute transition-all duration-200 pointer-events-none",
+                  copied
+                    ? "opacity-100 scale-100"
+                    : "opacity-0 scale-75"
+                )}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="flex justify-center">
         <div className="w-1/2">
           <Combobox
-            items={items}
-            value={airport}
+            items={airportItems}
+            value={activeAirport?.icao || ""}
             onValueChange={(value) => {
-              if (value) {
-                setAirport(value);
-                setRunways(airports[value as keyof typeof airports]?.runways ?? []);
-              }
+              if(!value) return;
+              setAirport(value);
             }}
           >
-            <ComboboxInput placeholder="Select an airport." />
+            <ComboboxInput placeholder="Select airport here" />
             <ComboboxContent>
               <ComboboxList>
                 {(item) => (
@@ -72,53 +119,62 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Runway display */}
-      {airport &&
+      {activeAirport && activeRunways && activeRunways.length > 0 && (<>
         <section className="mt-5">
-          <div className="flex items-center p-3 justify-center">
-            <h1 className="text-center">Selected runway direction:&nbsp;
-              <Badge>
-                {runways.map((runway, i) => (
-                  <span key={i} className="font-bold">
-                    {runway}
-                    {i !== runways.length - 1 && (" / ")}
-                  </span>
-                ))}
-              </Badge>
+          <SeparatorWithLabel title="Airplane performance calculation section" />
+          <div className="flex items-center justify-center gap-2">
+            <h1>
+              Selected runway direction:&nbsp;
+              <Badge>{activeRunways.join(" / ")}</Badge>
             </h1>
-
-            <Button variant="ghost" className="cursor-pointer" size="icon-sm" onClick={swapRunways}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => changeRunways()}
+              className="cursor-pointer"
+            >
               <RefreshCw
-                className="transition-transform duration-500 ease-in-out"
+                className="transition-transform duration-500"
                 style={{ transform: `rotate(${rotation}deg)` }}
               />
             </Button>
           </div>
 
-          <div className="flex flex-row items-center justify-center">
-            <div className="flex flex-wrap justify-center gap-4 w-full min-xl:w-1/2 max-xl:px-5">
-              {runways.map((rwy, i) => {
-                return (
-                  <div className="w-full relative" key={i}>
-                    <Runway identifier={rwy} />
-                    <div className="flex">
-                      <div className="w-1/3 border-r border-black">
-                        <h1 className="text-center font-bold">TDZ</h1>
-                      </div>
-                      <div className="w-1/3 border-r border-black">
-                        <h1 className="text-center font-bold">MID</h1>
-                      </div>
-                      <div className="w-1/3">
-                        <h1 className="text-center font-bold">END</h1>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+          <div className="flex items-center my-3 justify-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button>Open decision-making helpsheet</Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent className="!max-w-none !max-h-none w-fit p-4">
+                <div className="relative min-w-[40vw] h-[90vh]">
+                  <Image
+                    src={ccTableImage}
+                    alt="Condition code decision making helpsheet"
+                    className="object-contain"
+                    fill
+                    priority
+                  />
+                </div>
+                <AlertDialogCancel>Close</AlertDialogCancel>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="flex flex-wrap gap-4 w-full min-xl:w-1/2 max-xl:px-5">
+              {activeRunways!.map((rwy: any) => (
+                <RunwayForm key={rwy} rwy={rwy} />
+              ))}
             </div>
           </div>
         </section>
-      }
+
+        <section>
+          <SeparatorWithLabel title="Situational awareness section" />
+          <SituationalAwarenessSelector activeRunways={activeRunways} />
+        </section>
+      </>)}
     </main>
   );
 }

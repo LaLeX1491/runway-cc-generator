@@ -1,6 +1,7 @@
 import "./index.css";
 import ClientThemeProvider from '@/providers/ClientThemeProvider';
 import React from 'react';
+import {ConditionCodeProvider} from '@/context/ConditionCodeProvider';
 
 export default function RootLayout({
   children,
@@ -9,12 +10,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-secondary w-screen h-screen">
+      <body className="bg-secondary w-screen overflow-x-hidden min-h-screen">
         <header className="w-full text-center mb-3">
           <h1 className="text-5xl text-primary font-bold">FIR Bremen</h1>
           <span className="text-muted-foreground">runway condition code generator</span>
         </header>
-        <ClientThemeProvider>{children}</ClientThemeProvider>
+        <ClientThemeProvider>
+          <ConditionCodeProvider>
+            {children}
+          </ConditionCodeProvider>
+        </ClientThemeProvider>
       </body>
     </html>
   );
