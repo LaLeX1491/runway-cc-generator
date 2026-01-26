@@ -1,5 +1,5 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
-import {Card, CardContent, CardHeader} from '@/components/ui/card';
+import {Card, CardContent} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
 import InputHeadline from '@/components/InputHeadline';
 import Code from '@/components/ui/code';

@@ -18,7 +18,7 @@ import {Badge} from '@/components/ui/badge';
 import ccTableImage from "../../public/cc-table.png";
 import Image from 'next/image';
 import {Button} from '@/components/ui/button';
-import {Separator, SeparatorWithLabel} from '@/components/ui/separator';
+import {SeparatorWithLabel} from '@/components/ui/separator';
 import SituationalAwarenessSelector from '@/components/SituationalAwarenessSelector';
 
 export default function Page() {

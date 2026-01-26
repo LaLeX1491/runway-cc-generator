@@ -1,9 +1,7 @@
 import Runway from '@/components/Runway';
 import {useState} from 'react';
-import {Checkbox} from '@/components/ui/checkbox';
 import ConditionSelector from '@/components/ConditionSelector';
 import {RunwayZone} from '@/lib/types';
-import {Separator} from '@/components/ui/separator';
 import {Switch} from '@/components/ui/switch';
 
 export default function RunwayForm({rwy}: { rwy: string }) {
