@@ -8,7 +8,12 @@ import {useState} from 'react';
 import SnowBankOnRunwaySelector from '@/components/forms/SnowBankSelectors';
 
 export default function SituationalAwarenessSection({activeRunways}: {activeRunways: string[]}) {
-  const [snowBankOnRunways, setSnowBankOnRunways] = useState<boolean>(false);
+  const [includeItemI, setIncludeItemI] = useState<boolean>(false);
+  const [itemI, setItemI] = useState<number | undefined>(undefined);
+  const [includeItemJ, setIncludeItemJ] = useState<boolean>(false);
+  const [includeItemK, setIncludeItemK] = useState<boolean>(false);
+  const [includeItemL, setIncludeItemL] = useState<boolean>(false);
+  const [includeItemM, setIncludeItemM] = useState<boolean>(false);
 
   return (
     <section className="w-full flex justify-center items-center flex-col">
@@ -24,60 +29,103 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
         </div>
 
         {activeRunways.map((runway) => (
-          <TabsContent key={runway} value={runway} className="w-full flex flex-col gap-2">
+          <TabsContent key={runway} value={runway} className="w-full flex flex-col">
             <Card>
               <CardContent>
                 <InputHeadline title="Reduced runway length" tooltip="Item I: Used if the runway has to be reduced due to contamination." linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=left%20out%20completely.-,Item%20I,-.%20Reduced%20runway%20length" />
-                <div className="flex items-center gap-2">
-                  <Switch />
-                  <span>Include information</span>
-                </div>
-                <Input placeholder="Remaining runway length" type="number" />
-                <Code className="mt-2" text={"RWY " + runway + " REDUCED TO X METERS"} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={includeItemI} onClick={() => setIncludeItemI(!includeItemI)} />
+                    <span>Include item</span>
+                  </div>
+                  {includeItemI && (
+                    <div className="mt-2">
+                      <Input
+                        placeholder="Remaining runway length"
+                        type="number"
+                        value={itemI ?? ""}
+                        onChange={(e) => {
+                          const v = e.currentTarget.value;
+
+                          if (v === "") {
+                            setItemI(undefined);
+                          } else {
+                            setItemI(Number(v));
+                          }
+                        }}
+                      />
+
+                      <div
+                        className={`transition-opacity duration-300 ${itemI ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
+                      >
+                        {itemI && (
+                          <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${itemI} METERS`} />
+                        )}
+                      </div>
+                    </div>
+                  )}
               </CardContent>
 
-              <CardContent>
-                <InputHeadline title="Drifiting snow on the runway" tooltip="Item J: Drifting snow on the runway" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=REDUCED%20TO%202000%22-,Item%20J,-.%20Drifting%20snow%20on" />
-                <div className="flex items-center gap-2">
-                  <Switch />
-                  <span>Include information</span>
-                </div>
-                <Code className="mt-2" text={"RWY " + runway + " DRIFTING SNOW "} />
-              </CardContent>
+              <StaticItemSelector
+                content={"RWY " + runway + " DRIFTING SNOW "}
+                title="Drifiting snow on the runway"
+                tooltip="Item J: Drifting snow on the runway"
+                linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=REDUCED%20TO%202000%22-,Item%20J,-.%20Drifting%20snow%20on"
+                value={includeItemJ}
+                toggleContent={() => setIncludeItemJ(!includeItemJ)}
+              />
 
-              <CardContent>
-                <InputHeadline title="Loose sand" tooltip="Item K: Loose sand on the runway" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=example%3A%20%22DRIFTING%20SNOW%22.-,Item%20K,-.%20Loose%20sand%20on" />
-                <div className="flex items-center gap-2">
-                  <Switch />
-                  <span>Include information</span>
-                </div>
-                <Code className="mt-2" text={"RWY " + runway + " LOOSE SAND"} />
-              </CardContent>
+              <StaticItemSelector
+                content={"RWY " + runway + " LOOSE SAND"}
+                title="Loose sand"
+                tooltip="Item K: Loose sand on the runway"
+                linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=example%3A%20%22DRIFTING%20SNOW%22.-,Item%20K,-.%20Loose%20sand%20on"
+                value={includeItemK}
+                toggleContent={() => setIncludeItemK(!includeItemK)}
+              />
 
-              <CardContent>
-                <InputHeadline title="Runway chemical treatment" tooltip="Item L: Chemical treatment on the runway" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=09%20LOOSE%20SAND%22-,Item%20L,-.%20Chemical%20treatment%20on" />
-                <div className="flex items-center gap-2">
-                  <Switch />
-                  <span>Include information</span>
-                </div>
-                <Code className="mt-2" text={"RWY " + runway + " CHEMICALLY TREATED"} />
-              </CardContent>
+              <StaticItemSelector
+                content={"RWY " + runway + " CHEMICALLY TREATED"}
+                title="Runway chemical treatment"
+                tooltip="Item L: Chemical treatment on the runway"
+                linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=09%20LOOSE%20SAND%22-,Item%20L,-.%20Chemical%20treatment%20o"
+                value={includeItemL}
+                toggleContent={() => setIncludeItemL(!includeItemL)}
+              />
 
               <CardContent>
                 <InputHeadline title="Snow bank on runway" tooltip="Item M: Snow banks on the runway" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=15L%20CHEMICALLY%20TREATED%22-,Item%20M,-.%20Snow%20banks%20on" />
                 <div className="flex items-center gap-2">
-                  <Switch onClick={() => setSnowBankOnRunways(!snowBankOnRunways)} />
-                  <span>Include information</span>
+                  <Switch onClick={() => {
+                    setIncludeItemM(!includeItemM);
+                    console.log("call")
+                  }} />
+                  <span>Include item</span>
                 </div>
-                {snowBankOnRunways && (
+                {includeItemM && (
                   <SnowBankOnRunwaySelector />
                 )}
-                <Code className="mt-2" text={"RWY " + runway + " CHEMICALLY TREATED"} />
               </CardContent>
             </Card>
           </TabsContent>
         ))}
       </Tabs>
     </section>
+  )
+}
+
+function StaticItemSelector({content, title, tooltip, linkToIcao, value, toggleContent}: {content: string, title: string, tooltip: string, linkToIcao: string, value: boolean, toggleContent: () => void}) {
+  return (
+    <CardContent>
+      <InputHeadline title={title} tooltip={tooltip} linkToIcao={linkToIcao} />
+      <div className="flex items-center gap-2">
+        <Switch checked={value} className="cursor-pointer" onClick={toggleContent} />
+        <span>Include item</span>
+      </div>
+      <div
+        className={`transition-opacity duration-300 ${value ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
+      >
+        {value && <Code className="mt-2" text={content} />}
+      </div>
+    </CardContent>
   )
 }
