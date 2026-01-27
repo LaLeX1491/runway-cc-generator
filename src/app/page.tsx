@@ -13,16 +13,16 @@ import { AIRPORTS } from "@/lib/data";
 import {clsx} from 'clsx';
 import {useConditionCode} from '@/context/ConditionCodeProvider';
 import {AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger} from '@/components/ui/alert-dialog';
-import RunwayForm from '@/components/RunwayForm';
+import RunwayForm from '@/components/forms/RunwayForm';
 import {Badge} from '@/components/ui/badge';
 import ccTableImage from "../../public/cc-table.png";
 import Image from 'next/image';
 import {Button} from '@/components/ui/button';
 import {SeparatorWithLabel} from '@/components/ui/separator';
-import SituationalAwarenessSelector from '@/components/SituationalAwarenessSelector';
+import SituationalAwarenessSection from '@/components/SituationalAwarenessSection';
 
 export default function Page() {
-  const [rotation, setRotation] = useState(0);
+  const [rotation, _] = useState(0);
   const [copied, setCopied] = useState<boolean>(false);
 
   const { setAirport, activeAirport, activeRunways, changeRunways} = useConditionCode();
@@ -172,7 +172,7 @@ export default function Page() {
 
         <section>
           <SeparatorWithLabel title="Situational awareness section" />
-          <SituationalAwarenessSelector activeRunways={activeRunways} />
+          <SituationalAwarenessSection activeRunways={activeRunways} />
         </section>
       </>)}
     </main>

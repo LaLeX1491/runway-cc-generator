@@ -1,6 +1,6 @@
-import Runway from '@/components/Runway';
+import Runway from '@/components/ui/Runway';
 import {useState} from 'react';
-import ConditionSelector from '@/components/ConditionSelector';
+import AirplanePerformanceSection from '@/components/AirplanePerformanceSection';
 import {RunwayZone} from '@/lib/types';
 import {Switch} from '@/components/ui/switch';
 
@@ -20,7 +20,7 @@ export default function RunwayForm({rwy}: { rwy: string }) {
           {(["TDZ", "MID", "END"] as RunwayZone[]).map(section => (
             <div key={section} className={`w-1/3 ${section !== "END" ? "border-r border-black" : ""}`}>
               <h1 className="text-center font-extrabold text-2xl">{section}</h1>
-              <ConditionSelector />
+              <AirplanePerformanceSection />
             </div>
           ))}
         </div>
@@ -29,7 +29,7 @@ export default function RunwayForm({rwy}: { rwy: string }) {
       {equalContamination && (
         <div className="flex flex-col w-full pb-1">
           <h1 className="text-center font-extrabold text-2xl">RWY {rwy}</h1>
-          <ConditionSelector equalContamination={true} />
+          <AirplanePerformanceSection equalContamination={true} />
         </div>
       )}
 
