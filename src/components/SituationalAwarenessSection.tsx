@@ -102,7 +102,7 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
                   <span>Include item</span>
                 </div>
                 {includeItemM && (
-                  <SnowBankOnRunwaySelector />
+                  <SnowBankOnRunwaySelector runway={runway} />
                 )}
               </CardContent>
             </Card>

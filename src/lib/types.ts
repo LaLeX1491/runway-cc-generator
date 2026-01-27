@@ -26,9 +26,3 @@ export type Airport = {
 };
 export type SnowbankCrossPosition = "L" | "R" | "LR" | "NONE";
 export type SnowbankAlongPosition = "THR" | "MID" | "BTN TWY" | undefined;
-export type SnowBank = {
-  crossPosition: SnowbankCrossPosition,
-  margin: number,
-  alongPosition?: SnowbankAlongPosition,
-  btnTaxiways?: string[],
-}

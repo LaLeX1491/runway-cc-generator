@@ -10,11 +10,14 @@ export default function Code({text, copy = false, className = ""}: { text: strin
   }
 
   return (
-    <code className={clsx("w-full flex justify-between items-center px-4 py-1 rounded-md border-gray-200 border-1 bg-gray-100", className)}>
-      {text}
-      {copy && (
-        <CopyIcon onClick={copyToClipboard} size={20} />
+    <code
+      className={clsx(
+        "w-full flex justify-between items-center px-4 py-1 rounded-md border-gray-200 border bg-gray-100 whitespace-pre-wrap",
+        className
       )}
+    >
+      {text}
+      {copy && <CopyIcon onClick={copyToClipboard} size={20} />}
     </code>
   )
 }
