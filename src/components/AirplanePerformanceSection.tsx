@@ -14,9 +14,9 @@ import {CONDITION_CODES, getConditionCodeOptions} from "@/lib/data";
 import {ConditionCode, ContaminationLevel, ContaminationType, LooseContaminationDepth} from '@/lib/types';
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {Input} from '@/components/ui/input';
-import InputHeadline from '@/components/InputHeadline';
+import InputHeadline from '@/components/ui/InputHeadline';
 
-export default function ConditionSelector({equalContamination = false}: { equalContamination?: boolean }) {
+export default function AirplanePerformanceSection({equalContamination = false}: { equalContamination?: boolean }) {
   const [selectedCondition, setSelectedCondition] = useState<ConditionCode>("6");
   const [contaminationType, setContaminationType] = useState<ContaminationType | null>(
     selectedCondition === "6" ? getConditionCodeOptions("6")[0] ?? null : null
