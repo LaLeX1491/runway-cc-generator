@@ -25,12 +25,13 @@ export default function AirplanePerformanceSection({equalContamination = false}:
   const [looseContaminationDepth, setLooseContaminationDepth] = useState<LooseContaminationDepth | null>(null);
 
   const setCondition = (cc: ConditionCode) => {
-    if(cc !== selectedCondition) {
-      setContaminationType(selectedCondition === "6" ? getConditionCodeOptions("6")[0] ?? null : null);
+    if (cc !== selectedCondition) {
+      // Set contaminationType basierend auf dem **neuen** Code
+      setContaminationType(cc === "6" ? getConditionCodeOptions("6")[0] ?? null : null);
       setContaminationLevel(null);
       setSelectedCondition(cc);
     }
-  }
+  };
 
   const contaminants = getConditionCodeOptions(selectedCondition);
 
@@ -38,21 +39,29 @@ export default function AirplanePerformanceSection({equalContamination = false}:
     <div className="flex flex-col gap-3 px-5">
       <h1 className="text-center">Condition Code</h1>
       <div className="flex w-full justify-center gap-2 flex-wrap">
-        {CONDITION_CODES.map((value) => (
-          <Button
-            size="sm"
-            key={value}
-            onClick={() => {
-              setCondition(value);
-            }}
-            className={clsx(
-              selectedCondition === value &&
-              "ring-2 ring-primary ring-offset-2 ring-offset-background"
-            )}
-          >
-            {value}
-          </Button>
-        ))}
+        {Object.keys(CONDITION_CODES)
+          .map(Number)
+          .sort((a, b) => b - a)
+          .map((numKey) => {
+            const key = numKey.toString() as ConditionCode;
+            return (
+              <Tooltip key={key}>
+                <TooltipTrigger>
+                  <Button
+                    size="sm"
+                    onClick={() => setCondition(key)}
+                    className={clsx(
+                      selectedCondition === key &&
+                      "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                    )}
+                  >
+                    {key}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{CONDITION_CODES[key]}</TooltipContent>
+              </Tooltip>
+            );
+          })}
       </div>
 
       <div className="w-full justify-center flex flex-wrap">

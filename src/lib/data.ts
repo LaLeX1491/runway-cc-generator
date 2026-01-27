@@ -4,7 +4,15 @@ export function getConditionCodeOptions(code: ConditionCode): ContaminationType[
   return CONDITION_DESCRIPTIONS[code];
 }
 
-export const CONDITION_CODES: ConditionCode[] = ["6", "5", "4", "3", "2", "1", "0"];
+export const CONDITION_CODES: Record<ConditionCode, string> = {
+  6: "DRY",
+  5: "GOOD",
+  4: "GOOD TO MEDIUM",
+  3: "MEDIUM",
+  2: "MEDIUM TO POOR",
+  1: "POOR",
+  0: "LESS THAN POOR",
+};
 
 export const AIRPORTS: Airport[] = [
   {

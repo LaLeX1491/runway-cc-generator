@@ -27,9 +27,11 @@ export default function RunwayForm({rwy}: { rwy: string }) {
       )}
 
       {equalContamination && (
-        <div className="flex flex-col w-full pb-1">
-          <h1 className="text-center font-extrabold text-2xl">RWY {rwy}</h1>
-          <AirplanePerformanceSection equalContamination={true} />
+        <div className="flex justify-center pb-1">
+          <div>
+            <h1 className="text-center font-extrabold text-2xl">RWY {rwy}</h1>
+            <AirplanePerformanceSection equalContamination={true} />
+          </div>
         </div>
       )}
 
