@@ -1,32 +1,34 @@
-import {Card, CardContent} from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import InputHeadline from '@/components/ui/InputHeadline';
-import {Switch} from '@/components/ui/switch';
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import Code from '@/components/ui/code';
 import SnowBankOnRunwaySelector from '@/components/forms/SnowBankSelectors';
 import { RunwayItemsFormState } from '@/lib/types';
+import SwitchField from '@/components/ui/SwitchField';
 
 export default function RunwayItemsForm({
-  runway, 
-  state, 
+  runway,
+  state,
   onUpdate
 }: {
-  runway: string, 
+  runway: string,
   state: RunwayItemsFormState,
   onUpdate: (updates: Partial<RunwayItemsFormState>) => void
 }) {
-  
+
   return (
     <div className="flex-col flex gap-2">
       <CardContent>
-        <InputHeadline title="Reduced runway length" tooltip="Item I: Used if the runway has to be reduced due to contamination." linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=left%20out%20completely.-,Item%20I,-.%20Reduced%20runway%20length" />
-        <div className="flex items-center gap-2">
-          <Switch 
-            checked={state.includeItemI} 
-            onClick={() => onUpdate({ includeItemI: !state.includeItemI })} 
-          />
-          <span>Include item</span>
-        </div>
+        <InputHeadline
+          title="Reduced runway length"
+          tooltip="Item I: Used if the runway has to be reduced due to contamination."
+          linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=left%20out%20completely.-,Item%20I,-.%20Reduced%20runway%20length"
+        />
+        <SwitchField
+          checked={state.includeItemI}
+          onClick={() => onUpdate({ includeItemI: !state.includeItemI })}
+          label="Include item"
+        />
         {state.includeItemI && (
           <div className="mt-2">
             <Input
@@ -39,12 +41,8 @@ export default function RunwayItemsForm({
               }}
             />
 
-            <div
-              className={`transition-opacity duration-300 ${state.itemI ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
-            >
-              {state.itemI && (
-                <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${state.itemI} METERS.`} />
-              )}
+            <div className={`transition-opacity duration-300 ${state.itemI ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
+              {state.itemI && <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${state.itemI} METERS.`} />}
             </div>
           </div>
         )}
@@ -52,7 +50,7 @@ export default function RunwayItemsForm({
 
       <StaticItemSelector
         content={"RWY " + runway + " DRIFTING SNOW."}
-        title="Drifiting snow on the runway"
+        title="Drifting snow on the runway"
         tooltip="Item J: Drifting snow on the runway"
         linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=REDUCED%20TO%202000%22-,Item%20J,-.%20Drifting%20snow%20on"
         value={state.includeItemJ}
@@ -78,16 +76,18 @@ export default function RunwayItemsForm({
       />
 
       <CardContent>
-        <InputHeadline title="Snow bank on runway" tooltip="Item M: Snow banks on the runway" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=15L%20CHEMICALLY%20TREATED%22-,Item%20M,-.%20Snow%20banks%20on" />
-        <div className="flex items-center gap-2">
-          <Switch 
-            checked={state.includeItemM}
-            onClick={() => onUpdate({ includeItemM: !state.includeItemM })} 
-          />
-          <span>Include item</span>
-        </div>
+        <InputHeadline
+          title="Snow bank on runway"
+          tooltip="Item M: Snow banks on the runway"
+          linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=15L%20CHEMICALLY%20TREATED%22-,Item%20M,-.%20Snow%20banks%20on"
+        />
+        <SwitchField
+          checked={state.includeItemM}
+          onClick={() => onUpdate({ includeItemM: !state.includeItemM })}
+          label="Include item"
+        />
         {state.includeItemM && (
-          <SnowBankOnRunwaySelector 
+          <SnowBankOnRunwaySelector
             runway={runway}
           />
         )}
@@ -99,7 +99,7 @@ export default function RunwayItemsForm({
 function StaticItemSelector({
   content,
   title,
-  tooltip, 
+  tooltip,
   linkToIcao,
   value,
   toggleContent
@@ -114,15 +114,10 @@ function StaticItemSelector({
   return (
     <CardContent>
       <InputHeadline title={title} tooltip={tooltip} linkToIcao={linkToIcao} />
-      <div className="flex items-center gap-2">
-        <Switch checked={value} className="cursor-pointer" onClick={toggleContent} />
-        <span>Include item</span>
-      </div>
-      <div
-        className={`transition-opacity duration-300 ${value ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
-      >
+      <SwitchField checked={value} onClick={toggleContent} label="Include item" />
+      <div className={`transition-opacity duration-300 ${value ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
         {value && <Code className="mt-2" text={content} />}
       </div>
     </CardContent>
-  )
+  );
 }
