@@ -11,13 +11,21 @@ import Code from '@/components/ui/code';
 import {parseSnowBank} from '@/lib/parser';
 
 const MAX_SNOWBANKS = 5;
-export default function SnowBankOnRunwaySelector({runway}: {runway: string}) {
-  const [snowBanks, setSnowBanks] = useState<(string | null)[]>([null]);
+export default function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
+  const [snowBanks, setSnowBanks] = useState<(string | null)[]>(
+    value.length > 0 ? value : [null]
+  );
 
-  const updateSnowBank = (index: number, value: string) => {
+  const updateSnowBank = (index: number, newValue: string) => {
     setSnowBanks(prev => {
       const copy = [...prev];
-      copy[index] = value;
+      copy[index] = newValue;
+
+      if (onChange) {
+        const filtered = copy.filter(s => s !== null) as string[];
+        onChange(filtered);
+      }
+      
       return copy;
     });
   };
@@ -28,7 +36,16 @@ export default function SnowBankOnRunwaySelector({runway}: {runway: string}) {
   };
 
   const deleteLastSnowBank = () => {
-    setSnowBanks(prev => prev.slice(0, -1));
+    setSnowBanks(prev => {
+      const newBanks = prev.slice(0, -1);
+
+      if (onChange) {
+        const filtered = newBanks.filter(s => s !== null) as string[];
+        onChange(filtered);
+      }
+      
+      return newBanks;
+    });
   };
 
   return (
@@ -81,7 +98,7 @@ export default function SnowBankOnRunwaySelector({runway}: {runway: string}) {
 }
 
 function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (value: string) => void }) {
-  const TRANSITIONS: Record<"L" | "R", Record<SnowbankCrossPosition, SnowbankCrossPosition> >= {
+  const TRANSITIONS: Record<"L" | "R", Record<SnowbankCrossPosition, SnowbankCrossPosition>> = {
     L: {
       NONE: "L",
       L: "NONE",
@@ -120,8 +137,8 @@ function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (va
   useEffect(() => {
     if (!onChange || !snowBankText) return;
     onChange(snowBankText);
-  }, [crossPosition, leftMarginFromCL, rightMarginFromCL, alongPosition, taxiways]);
-
+  }, [snowBankText]);
+  // onChange NICHT in dependencies!
 
   const toggleCrossPosition = (side: "L" | "R") => {
     setCrossPosition(prev => TRANSITIONS[side][prev]);

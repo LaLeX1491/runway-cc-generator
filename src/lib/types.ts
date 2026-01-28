@@ -26,3 +26,12 @@ export type Airport = {
 };
 export type SnowbankCrossPosition = "L" | "R" | "LR" | "NONE";
 export type SnowbankAlongPosition = "THR" | "MID" | "BTN TWY" | undefined;
+export type RunwayItemsFormState = {
+  includeItemI: boolean,
+  itemI?: number,
+  includeItemJ: boolean,
+  includeItemK: boolean,
+  includeItemL: boolean,
+  includeItemM: boolean,
+  itemM?: string,
+}
