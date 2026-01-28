@@ -26,6 +26,7 @@ export type Airport = {
 };
 export type SnowbankCrossPosition = "L" | "R" | "LR" | "NONE";
 export type SnowbankAlongPosition = "THR" | "MID" | "BTN TWY" | undefined;
+export type TaxiwaySnowbankPosition = "BTN TWY" | "FM TWY" | "BTN TWY AND RWY" | undefined;
 export type RunwayItemsFormState = {
   includeItemI: boolean,
   itemI?: number,

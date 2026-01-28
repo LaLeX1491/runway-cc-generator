@@ -3,14 +3,16 @@ import {Separator, SeparatorWithLabel} from '@/components/ui/separator';
 import {Card, CardContent} from '@/components/ui/card';
 import { Button } from '../ui/button';
 import {CirclePlus, Trash} from 'lucide-react';
-import {SnowbankAlongPosition, SnowbankCrossPosition} from '@/lib/types';
+import {SnowbankAlongPosition, SnowbankCrossPosition, TaxiwaySnowbankPosition} from '@/lib/types';
 import InputHeadline from '@/components/ui/InputHeadline';
 import {Switch} from '@/components/ui/switch';
 import {Input} from '@/components/ui/input';
 import Code from '@/components/ui/code';
 import {parseSnowBank} from '@/lib/parser';
+import SwitchField from '../ui/SwitchField';
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '../ui/combobox';
 
-const MAX_SNOWBANKS = 5;
+const MAX_SNOWBANKS_RUNWAY = 5;
 export default function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
   const [snowBanks, setSnowBanks] = useState<(string | null)[]>(
     value.length > 0 ? value : [null]
@@ -31,7 +33,7 @@ export default function SnowBankOnRunwaySelector({runway, value = [], onChange}:
   };
 
   const addSnowBank = () => {
-    if (snowBanks.length >= MAX_SNOWBANKS) return;
+    if (snowBanks.length >= MAX_SNOWBANKS_RUNWAY) return;
     setSnowBanks(prev => [...prev, null]);
   };
 
@@ -77,12 +79,12 @@ export default function SnowBankOnRunwaySelector({runway, value = [], onChange}:
           className="w-full flex items-center gap-2"
           onClick={addSnowBank}
           disabled={
-            snowBanks.length >= MAX_SNOWBANKS ||
+            snowBanks.length >= MAX_SNOWBANKS_RUNWAY ||
             snowBanks[snowBanks.length - 1] === null
           }
         >
           <CirclePlus />
-          Add snow bank ({snowBanks.length}/{MAX_SNOWBANKS})
+          Add snow bank ({snowBanks.length}/{MAX_SNOWBANKS_RUNWAY})
         </Button>
 
         {snowBanks.length > 0 && (
@@ -234,5 +236,68 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
         </div>
       </div>
     </div>
+  )
+}
+
+export function SnowbankOnTawxiwaySelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
+  return (
+  <CardContent>
+    <TaxiwaySnowBankSelector runways={runways} onChange={onChange} />
+  </CardContent>
+  );
+}
+
+function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
+  const [position, setPosition] = useState<TaxiwaySnowbankPosition>(undefined);
+  const [selectedRunway, setSelectedRunway] = useState<string>("");
+
+  return (
+    <Card>
+      <CardContent>
+        <Input placeholder="TWY identifier" />
+        <div>
+          <div className="flex items-center gap-2 mt-2">
+              <SwitchField checked={position === "BTN TWY"} onClick={() => {
+                setPosition(position === "BTN TWY" ? undefined : "BTN TWY");
+              }} label="BTN TWY" />
+              <Input placeholder="A" className="w-9 h-9" />
+              <span>and</span>
+              <Input placeholder="B" className="w-9 h-9" />
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+              <SwitchField checked={position === "FM TWY"} onClick={() => {
+                setPosition(position === "FM TWY" ? undefined : "FM TWY");
+              }} label="FM TWY" />
+              <Input placeholder="A" className="w-9 h-9" />
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+              <SwitchField checked={position === "BTN TWY AND RWY"} onClick={() => {
+                setPosition(position === "BTN TWY AND RWY" ? undefined : "BTN TWY AND RWY");
+              }} label="BTN TWY" />
+              <Input placeholder="A" className="w-9 h-9" />
+              <span>AND RWY</span>
+              <Combobox
+                items={runways}
+                value={selectedRunway}
+                onValueChange={(value) => {
+                  if(!value) return;
+                  setSelectedRunway(value);
+                }}
+              >
+              <ComboboxInput className="w-17" placeholder="Select runway here" />
+              <ComboboxContent>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item} value={item}>
+                      {item}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+          </Combobox>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
