@@ -45,7 +45,7 @@ export default function AirplanePerformanceSection({equalContamination = false}:
             const key = numKey.toString() as ConditionCode;
             return (
               <Tooltip key={key}>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <Button
                     size="sm"
                     onClick={() => setCondition(key)}

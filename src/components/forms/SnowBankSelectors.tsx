@@ -35,10 +35,9 @@ export default function SnowBankOnRunwaySelector({runway}: {runway: string}) {
     <Card>
       <CardContent className="space-y-4">
         {snowBanks.map((_, index) => (
-          <div>
+          <div key={index}>
             <SeparatorWithLabel className="mt-0" title={"Snowbank " + (index+1)} />
             <SnowBankSelector
-              key={index}
               runway={runway}
               onChange={(value) => updateSnowBank(index, value)}
             />

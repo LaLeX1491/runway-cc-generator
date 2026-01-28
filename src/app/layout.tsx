@@ -11,11 +11,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-secondary w-screen overflow-x-hidden min-h-screen">
-        <header className="w-full text-center mb-3">
-          <h1 className="text-5xl text-primary font-bold">FIR Bremen</h1>
-          <span className="text-muted-foreground">runway condition code generator</span>
-        </header>
         <ClientThemeProvider>
+          <header className="w-full text-center mb-3">
+            <h1 className="text-5xl text-primary font-bold">FIR Bremen</h1>
+            <span className="text-muted-foreground">runway condition code generator</span>
+          </header>
           <ConditionCodeProvider>
             {children}
           </ConditionCodeProvider>
