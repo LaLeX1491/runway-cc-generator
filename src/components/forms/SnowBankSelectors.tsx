@@ -138,7 +138,6 @@ function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (va
     if (!onChange || !snowBankText) return;
     onChange(snowBankText);
   }, [snowBankText]);
-  // onChange NICHT in dependencies!
 
   const toggleCrossPosition = (side: "L" | "R") => {
     setCrossPosition(prev => TRANSITIONS[side][prev]);
@@ -163,8 +162,8 @@ function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (va
               <Input
                 placeholder="Margin in meters"
                 type="number"
-                value={leftMarginFromCL ?? ""}
-                onChange={(e) => setLeftMarginFromCL(Number(e.currentTarget.value))}
+                value={leftMarginFromCL ?? 0}
+                onChange={(e) => setLeftMarginFromCL(e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value))}
               />
             </div>
             <div className="w-1/2">
@@ -172,8 +171,8 @@ function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (va
               <Input
                 placeholder="Margin in meters"
                 type="number"
-                value={rightMarginFromCL ?? ""}
-                onChange={(e) => setRightMarginFromCL(Number(e.currentTarget.value))}
+                value={rightMarginFromCL ?? 0}
+                onChange={(e) => setRightMarginFromCL(e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value))}
               />
             </div>
           </div>

@@ -18,7 +18,8 @@ export function parseSnowBank(
           : rightMarginFromCL?.toString()
       } FM CL`;
     } else {
-      if(leftMarginFromCL && rightMarginFromCL) {
+      if(leftMarginFromCL && rightMarginFromCL || leftMarginFromCL === 0 || rightMarginFromCL === 0) {
+
         if(leftMarginFromCL === rightMarginFromCL) {
           output += ` LR${leftMarginFromCL} FM CL`;
         } else {
