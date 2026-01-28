@@ -26,7 +26,6 @@ export default function AirplanePerformanceSection({equalContamination = false}:
 
   const setCondition = (cc: ConditionCode) => {
     if (cc !== selectedCondition) {
-      // Set contaminationType basierend auf dem **neuen** Code
       setContaminationType(cc === "6" ? getConditionCodeOptions("6")[0] ?? null : null);
       setContaminationLevel(null);
       setSelectedCondition(cc);
