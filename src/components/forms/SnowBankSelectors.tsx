@@ -54,7 +54,7 @@ export default function SnowBankOnRunwaySelector({runway, value = [], onChange}:
         {snowBanks.map((_, index) => (
           <div key={index}>
             <SeparatorWithLabel className="mt-0" title={"Snowbank " + (index+1)} />
-            <SnowBankSelector
+            <RunwaySnowBankSelector
               runway={runway}
               onChange={(value) => updateSnowBank(index, value)}
             />
@@ -97,7 +97,7 @@ export default function SnowBankOnRunwaySelector({runway, value = [], onChange}:
   );
 }
 
-function SnowBankSelector({ runway, onChange }: { runway: string, onChange?: (value: string) => void }) {
+function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange?: (value: string) => void }) {
   const TRANSITIONS: Record<"L" | "R", Record<SnowbankCrossPosition, SnowbankCrossPosition>> = {
     L: {
       NONE: "L",

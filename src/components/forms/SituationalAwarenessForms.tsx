@@ -4,7 +4,6 @@ import {Switch} from '@/components/ui/switch';
 import {Input} from '@/components/ui/input';
 import Code from '@/components/ui/code';
 import SnowBankOnRunwaySelector from '@/components/forms/SnowBankSelectors';
-import {useState} from 'react';
 import { RunwayItemsFormState } from '@/lib/types';
 
 export default function RunwayItemsForm({
@@ -97,7 +96,21 @@ export default function RunwayItemsForm({
   );
 }
 
-function StaticItemSelector({content, title, tooltip, linkToIcao, value, toggleContent}: {content: string, title: string, tooltip: string, linkToIcao: string, value: boolean, toggleContent: () => void}) {
+function StaticItemSelector({
+  content,
+  title,
+  tooltip, 
+  linkToIcao,
+  value,
+  toggleContent
+}: {
+  content: string,
+  title: string,
+  tooltip: string,
+  linkToIcao: string,
+  value: boolean,
+  toggleContent: () => void
+}) {
   return (
     <CardContent>
       <InputHeadline title={title} tooltip={tooltip} linkToIcao={linkToIcao} />

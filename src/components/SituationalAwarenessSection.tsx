@@ -52,7 +52,9 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
           <TabsContent key={runway} value={runway} className="w-full flex flex-col">
             <Card>
               {runwayItemsFormState[runway] && (
-                <RunwayItemsForm runway={runway} state={runwayItemsFormState[runway]} onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)} />
+                <div>
+                  <RunwayItemsForm runway={runway} state={runwayItemsFormState[runway]} onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)} />
+                </div>
               )}
             </Card>
           </TabsContent>

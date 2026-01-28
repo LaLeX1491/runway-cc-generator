@@ -146,7 +146,7 @@ export default function Page() {
                 <Button>Open decision-making helpsheet</Button>
               </AlertDialogTrigger>
 
-              <AlertDialogContent className="!max-w-none !max-h-none w-fit p-4">
+              <AlertDialogContent className="max-w-none! max-h-none! w-fit p-4">
                 <div className="relative min-w-[40vw] h-[90vh]">
                   <Image
                     src={ccTableImage}
@@ -162,7 +162,7 @@ export default function Page() {
           </div>
 
           <div className="flex justify-center">
-            <div className="flex flex-wrap gap-4 w-full min-xl:w-1/2 max-xl:px-5">
+            <div className="flex flex-wrap gap-4 w-full xl:w-1/2 max-xl:px-5">
               {activeRunways!.map((rwy: any) => (
                 <RunwayForm key={rwy} rwy={rwy} />
               ))}
