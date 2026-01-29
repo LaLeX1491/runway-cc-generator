@@ -90,7 +90,7 @@ export default function SnowBankOnRunwaySelector({runway, value = [], onChange}:
         {snowBanks.length > 0 && (
           <Code
             text={snowBanks
-              .map(s => (s != null ? s + ".\n" : ""))
+              .map(s => (s != null ? s + "\n" : ""))
               .join("")}
           />
         )}

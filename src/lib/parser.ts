@@ -41,5 +41,5 @@ export function parseSnowBank(
     }
   }
 
-  return output;
+  return output += ".";
 }
