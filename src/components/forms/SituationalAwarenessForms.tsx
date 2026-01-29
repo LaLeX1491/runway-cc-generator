@@ -1,10 +1,11 @@
-import { CardContent } from '@/components/ui/card';
 import InputHeadline from '@/components/ui/InputHeadline';
 import { Input } from '@/components/ui/input';
 import Code from '@/components/ui/code';
 import SnowBankOnRunwaySelector from '@/components/forms/SnowBankSelectors';
 import { RunwayItemsFormState } from '@/lib/types';
 import SwitchField from '@/components/ui/SwitchField';
+import FadeIn from '@/components/ui/FadeIn';
+import StaticItemSelector from '@/components/ui/StaticItemSelector';
 
 export default function RunwayItemsForm({
   runway,
@@ -17,8 +18,8 @@ export default function RunwayItemsForm({
 }) {
 
   return (
-    <div className="flex-col flex gap-2">
-      <CardContent>
+    <div className="flex-col flex gap-2 mb-2">
+      <div>
         <InputHeadline
           title="Reduced runway length"
           tooltip="Item I: Used if the runway has to be reduced due to contamination."
@@ -40,13 +41,12 @@ export default function RunwayItemsForm({
                 onUpdate({ itemI: v === "" ? undefined : Number(v) });
               }}
             />
-
-            <div className={`transition-opacity duration-300 ${state.itemI ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
-              {state.itemI && <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${state.itemI} METERS.`} />}
-            </div>
+            <FadeIn shown={!!state.itemI}>
+              <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${state.itemI} METERS.`} />
+            </FadeIn>
           </div>
         )}
-      </CardContent>
+      </div>
 
       <StaticItemSelector
         content={"RWY " + runway + " DRIFTING SNOW."}
@@ -75,7 +75,7 @@ export default function RunwayItemsForm({
         toggleContent={() => onUpdate({ includeItemL: !state.includeItemL })}
       />
 
-      <CardContent>
+      <div>
         <InputHeadline
           title="Snow bank on runway"
           tooltip="Item M: Snow banks on the runway"
@@ -91,33 +91,7 @@ export default function RunwayItemsForm({
             runway={runway}
           />
         )}
-      </CardContent>
-    </div>
-  );
-}
-
-function StaticItemSelector({
-  content,
-  title,
-  tooltip,
-  linkToIcao,
-  value,
-  toggleContent
-}: {
-  content: string,
-  title: string,
-  tooltip: string,
-  linkToIcao: string,
-  value: boolean,
-  toggleContent: () => void
-}) {
-  return (
-    <CardContent>
-      <InputHeadline title={title} tooltip={tooltip} linkToIcao={linkToIcao} />
-      <SwitchField checked={value} onClick={toggleContent} label="Include item" />
-      <div className={`transition-opacity duration-300 ${value ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
-        {value && <Code className="mt-2" text={content} />}
       </div>
-    </CardContent>
+    </div>
   );
 }
