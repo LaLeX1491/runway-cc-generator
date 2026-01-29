@@ -54,6 +54,8 @@ export function parseSnowBankOnTaxiway(
   taxiways?: [string, string | undefined],
   runway?: string,
 ): string {
+  if(taxiway.length === 0) throw new Error("No taxiway set!");
+
   let output = `TWY ${taxiway} SNOW BANK`;
 
   switch(position) {

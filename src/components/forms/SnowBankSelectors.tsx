@@ -8,7 +8,7 @@ import InputHeadline from '@/components/ui/InputHeadline';
 import {Switch} from '@/components/ui/switch';
 import {Input} from '@/components/ui/input';
 import Code from '@/components/ui/code';
-import {parseSnowBankOnRunway} from '@/lib/parser';
+import {parseSnowBankOnRunway, parseSnowBankOnTaxiway} from '@/lib/parser';
 import SwitchField from '../ui/SwitchField';
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '../ui/combobox';
 
@@ -239,13 +239,6 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   )
 }
 
-type SnowBankOnTaxiway = {
-  taxiway: string,
-  positon: TaxiwaySnowbankPosition;
-  taxiways: [string, string | undefined];
-  selectedRunway?: string;
-}
-
 export function SnowbankOnTawxiwaySelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
   return (
     <CardContent>
@@ -259,6 +252,24 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
   const [position, setPosition] = useState<TaxiwaySnowbankPosition>(undefined);
   const [taxiways, setTaxiways] = useState<[string, string | undefined]>(["", undefined]);
   const [selectedRunway, setSelectedRunway] = useState<string>("");
+
+  const snowBankText = useMemo(() => {
+    try {
+      return parseSnowBankOnTaxiway(
+        taxiway,
+        position,
+        taxiways,
+        selectedRunway
+      );
+    } catch {
+      return undefined;
+    }
+  }, [taxiway, position, taxiways, selectedRunway]);
+
+  useEffect(() => {
+    if (!onChange || !snowBankText) return;
+    onChange(snowBankText);
+  }, [snowBankText]);
 
   return (
     <Card>
@@ -334,6 +345,13 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
               </ComboboxContent>
           </Combobox>
           </div>
+        </div>
+        <div
+          className={`w-full transition-opacity duration-300 ${snowBankText ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}
+        >
+          {snowBankText && (
+            <Code className="mt-2" text={snowBankText} />
+          )}
         </div>
       </CardContent>
     </Card>
