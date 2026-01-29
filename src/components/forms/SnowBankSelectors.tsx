@@ -1,8 +1,5 @@
 import React, {useEffect, useMemo, useState, useRef} from 'react';
-import {Separator, SeparatorWithLabel} from '@/components/ui/separator';
-import {Card, CardContent} from '@/components/ui/card';
-import { Button } from '../ui/button';
-import {CirclePlus, Trash} from 'lucide-react';
+import {Separator} from '@/components/ui/separator';
 import {SnowbankAlongPosition, SnowbankCrossPosition, TaxiwaySnowbankPosition} from '@/lib/types';
 import InputHeadline from '@/components/ui/InputHeadline';
 import {Switch} from '@/components/ui/switch';
@@ -11,104 +8,13 @@ import Code from '@/components/ui/code';
 import {parseSnowBankOnRunway, parseSnowBankOnTaxiway} from '@/lib/parser';
 import SwitchField from '../ui/SwitchField';
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '../ui/combobox';
-
-const MAX_SNOWBANKS = 5;
-
-type SnowbankListProps = {
-  value?: string[];
-  onChange?: (value: string[]) => void;
-  renderItem: (index: number, onChange: (value: string | null) => void) => React.ReactNode;
-  getItemTitle: (index: number) => string;
-  itemType: string;
-}
-
-function SnowbankList({ value = [], onChange, renderItem, getItemTitle, itemType }: SnowbankListProps) {
-  const [snowBanks, setSnowBanks] = useState<(string | null)[]>(
-    value.length > 0 ? value : [null]
-  );
-
-  const updateSnowBank = (index: number, newValue: string | null) => {
-    setSnowBanks(prev => {
-      const copy = [...prev];
-      copy[index] = newValue;
-
-      if (onChange) {
-        const filtered = copy.filter(s => s !== null && s !== "") as string[];
-        onChange(filtered);
-      }
-
-      return copy;
-    });
-  };
-
-  const addSnowBank = () => {
-    if (snowBanks.length >= MAX_SNOWBANKS) return;
-    setSnowBanks(prev => [...prev, null]);
-  };
-
-  const deleteLastSnowBank = () => {
-    setSnowBanks(prev => {
-      const newBanks = prev.slice(0, -1);
-
-      if (onChange) {
-        const filtered = newBanks.filter(s => s !== null) as string[];
-        onChange(filtered);
-      }
-
-      return newBanks;
-    });
-  };
-
-  return (
-    <Card className="mt-2">
-      <CardContent className="space-y-4">
-        {snowBanks.map((_, index) => (
-          <div key={index}>
-            <SeparatorWithLabel className="mt-0" title={getItemTitle(index)} />
-            {renderItem(index, (value) => updateSnowBank(index, value))}
-          </div>
-        ))}
-
-        {snowBanks.length > 1 && (
-          <Button
-            variant="outline"
-            className="w-full flex items-center gap-2"
-            onClick={deleteLastSnowBank}
-          >
-            <Trash />
-            Delete current {itemType}
-          </Button>
-        )}
-
-        <Button
-          variant="outline"
-          className="w-full flex items-center gap-2"
-          onClick={addSnowBank}
-          disabled={
-            snowBanks.length >= MAX_SNOWBANKS ||
-            snowBanks[snowBanks.length - 1] === null
-          }
-        >
-          <CirclePlus />
-          Add {itemType} ({snowBanks.length}/{MAX_SNOWBANKS})
-        </Button>
-
-        {snowBanks.length > 0 && snowBanks[0] !== null && (
-          <Code
-            text={snowBanks
-              .map(s => (s != null ? s + "\n" : ""))
-              .join("")}
-          />
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+import ListSelector from '@/components/forms/ListSelector';
 
 export default function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
   return (
-    <SnowbankList
+    <ListSelector
       value={value}
+      maxItems={5}
       onChange={onChange}
       itemType="snowbank"
       getItemTitle={(index) => `Snowbank ${index + 1}`}
@@ -267,9 +173,10 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
 
 export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { runways: string[], value?: string[], onChange?: (value: string[]) => void }) {
   return (
-    <SnowbankList
+    <ListSelector
       value={value}
       onChange={onChange}
+      maxItems={10}
       itemType="snowbank"
       getItemTitle={(index) => `Snowbank ${index + 1}`}
       renderItem={(_, onItemChange) => (
