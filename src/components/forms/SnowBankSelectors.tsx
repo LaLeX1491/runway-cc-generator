@@ -10,7 +10,7 @@ import {Input} from '@/components/ui/input';
 import Code from '@/components/ui/code';
 import {parseSnowBankOnRunway, parseSnowBankOnTaxiway} from '@/lib/parser';
 import SwitchField from '../ui/SwitchField';
-import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '../ui/combobox';
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '../ui/combobox';
 
 const MAX_SNOWBANKS_RUNWAY = 5;
 export default function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
@@ -139,7 +139,7 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   useEffect(() => {
     if (!onChange || !snowBankText) return;
     onChange(snowBankText);
-  }, [snowBankText]);
+  }, [onChange, snowBankText]);
 
   const toggleCrossPosition = (side: "L" | "R") => {
     setCrossPosition(prev => TRANSITIONS[side][prev]);
@@ -239,7 +239,7 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   )
 }
 
-export function SnowbankOnTawxiwaySelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
+export function SnowbankOnTaxiwaySelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
   return (
     <CardContent>
       <TaxiwaySnowBankSelector runways={runways} onChange={onChange} />
@@ -269,7 +269,7 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
   useEffect(() => {
     if (!onChange || !snowBankText) return;
     onChange(snowBankText);
-  }, [snowBankText]);
+  }, [onChange, snowBankText]);
 
   return (
     <Card>

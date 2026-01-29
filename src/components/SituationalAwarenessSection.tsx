@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import RunwayItemsForm from '@/components/forms/SituationalAwarenessForms';
 import {Card} from '@/components/ui/card';
 import { RunwayItemsFormState } from '@/lib/types';
-import { SnowbankOnTawxiwaySelector } from './forms/SnowBankSelectors';
+import { SnowbankOnTaxiwaySelector } from './forms/SnowBankSelectors';
 
 export default function SituationalAwarenessSection({activeRunways}: {activeRunways: string[]}) {
   const [selectedRunway, setSelectedRunway] = useState(activeRunways[0]);
@@ -55,7 +55,7 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
               {runwayItemsFormState[runway] && (
                 <div>
                   <RunwayItemsForm runway={runway} state={runwayItemsFormState[runway]} onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)} />
-                  <SnowbankOnTawxiwaySelector runways={activeRunways} /> 
+                  <SnowbankOnTaxiwaySelector runways={activeRunways} />
                 </div>
               )}
             </Card>
