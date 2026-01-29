@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Card, CardContent} from '@/components/ui/card';
+import {CardContent} from '@/components/ui/card';
 import {SeparatorWithLabel} from '@/components/ui/separator';
 import {Button} from '@/components/ui/button';
 import {CirclePlus, Trash} from 'lucide-react';
@@ -52,47 +52,42 @@ export default function ListSelector({ value = [], onChange, renderItem, getItem
   };
 
   return (
-    <Card className="mt-2">
-      <CardContent className="space-y-4">
-        {items.map((_, index) => (
-          <div key={index}>
-            <SeparatorWithLabel className="mt-0" title={getItemTitle(index)} />
-            {renderItem(index, (value) => updateSnowBank(index, value))}
-          </div>
-        ))}
-
-        {items.length > 1 && (
-          <Button
-            variant="outline"
-            className="w-full flex items-center gap-2"
-            onClick={deleteLastSnowBank}
-          >
-            <Trash />
-            Delete current {itemType}
-          </Button>
-        )}
-
+    <CardContent className="flex flex-col gap-2">
+      {items.map((_, index) => (
+        <div key={index}>
+          <SeparatorWithLabel className="mt-0" title={getItemTitle(index)} />
+          {renderItem(index, (value) => updateSnowBank(index, value))}
+        </div>
+      ))}
+      {items.length > 1 && (
         <Button
           variant="outline"
           className="w-full flex items-center gap-2"
-          onClick={addSnowBank}
-          disabled={
-            items.length >= maxItems ||
-            items[items.length - 1] === null
-          }
+          onClick={deleteLastSnowBank}
         >
-          <CirclePlus />
-          Add {itemType} ({items.length}/{maxItems})
+          <Trash />
+          Delete current {itemType}
         </Button>
-
-        {items.length > 0 && items[0] !== null && (
-          <Code
-            text={items
-              .map(s => (s != null ? s + "\n" : ""))
-              .join("")}
-          />
-        )}
-      </CardContent>
-    </Card>
+      )}
+      <Button
+        variant="outline"
+        className="w-full flex items-center gap-2"
+        onClick={addSnowBank}
+        disabled={
+        items.length >= maxItems ||
+          items[items.length - 1] === null
+      }
+      >
+        <CirclePlus />
+        Add {itemType} ({items.length}/{maxItems})
+      </Button>
+      {items.length > 0 && items[0] !== null && (
+        <Code
+          text={items
+            .map(s => (s != null ? s + "\n" : ""))
+            .join("")}
+        />
+      )}
+    </CardContent>
   );
 }

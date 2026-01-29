@@ -1,4 +1,4 @@
-export type ConditionCode = "6" | "5" | "4" | "3" | "2" | "1" | "0";
+export type ConditionCode = 6 | 5 | 4 | 3 | 2 | 1 | 0;
 export type ContaminationLevel = "NR" | "25" | "50" | "75" | "100";
 export type RunwayZone = "TDZ" | "MID" | "END";
 export type LooseContaminationDepth = number | "NR";

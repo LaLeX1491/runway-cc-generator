@@ -8,11 +8,16 @@ import SwitchField from '@/components/ui/SwitchField';
 import InputHeadline from '@/components/ui/InputHeadline';
 import FadeIn from '@/components/ui/FadeIn';
 import Code from '@/components/ui/code';
+import {ApronConditionsSelector, TaxiwayConditionsSelector} from '@/components/forms/ApronConditions';
 
 export default function SituationalAwarenessSection({activeRunways}: {activeRunways: string[]}) {
   const [includeItemN, setIncludeItemN] = useState<boolean>(false);
   const [includeItemO, setIncludeItemO] = useState<boolean>(false);
   const [itemO, setItemO] = useState<string[]>([]);
+  const [includeItemP, setIncludeItemP] = useState<boolean>(false);
+  const [itemP, setItemP] = useState<string[]>([]);
+  const [includeItemR, setIncludeItemR] = useState<boolean>(false);
+  const [itemR, setItemR] = useState<string[]>([]);
 
   const [runwayItemsFormState, setRunwayItemsFormState] = useState<Record<string, RunwayItemsFormState>>({});
 
@@ -123,7 +128,18 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
                 </FadeIn>
               </div>
               <div>
-
+                <InputHeadline title={"Taxiway conditions"} tooltip={"EDIT TWY COND"} linkToIcao={""} />
+                <SwitchField checked={includeItemP} onClick={() => setIncludeItemP(!includeItemP)} label={"Include item"} />
+                <FadeIn shown={includeItemP}>
+                  <TaxiwayConditionsSelector value={itemP} onChange={setItemP} />
+                </FadeIn>
+              </div>
+              <div>
+                <InputHeadline title={"Apron conditions"} tooltip={"EDIT APN COND"} linkToIcao={""} />
+                <SwitchField checked={includeItemR} onClick={() => setIncludeItemR(!includeItemR)} label={"Include item"} />
+                <FadeIn shown={includeItemR}>
+                  <ApronConditionsSelector value={itemR} onChange={setItemP} />
+                </FadeIn>
               </div>
             </div>
           </CardContent>
