@@ -239,44 +239,82 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   )
 }
 
+type SnowBankOnTaxiway = {
+  taxiway: string,
+  positon: TaxiwaySnowbankPosition;
+  taxiways: [string, string | undefined];
+  selectedRunway?: string;
+}
+
 export function SnowbankOnTawxiwaySelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
   return (
-  <CardContent>
-    <TaxiwaySnowBankSelector runways={runways} onChange={onChange} />
-  </CardContent>
+    <CardContent>
+      <TaxiwaySnowBankSelector runways={runways} onChange={onChange} />
+    </CardContent>
   );
 }
 
 function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onChange?: (value: string) => void }) {
+  const [taxiway, setTaxiway] = useState<string>("");
   const [position, setPosition] = useState<TaxiwaySnowbankPosition>(undefined);
+  const [taxiways, setTaxiways] = useState<[string, string | undefined]>(["", undefined]);
   const [selectedRunway, setSelectedRunway] = useState<string>("");
 
   return (
     <Card>
       <CardContent>
-        <Input placeholder="TWY identifier" />
+        <SeparatorWithLabel className="mt-0" title={"Taxiway " + taxiway} />
+        <div className="flex items-center gap-2">
+          <span>Snowbank on TWY </span>
+          <TaxiwayField value={taxiway} onChange={(value) => setTaxiway(value)} />
+        </div>
         <div>
           <div className="flex items-center gap-2 mt-2">
               <SwitchField checked={position === "BTN TWY"} onClick={() => {
                 setPosition(position === "BTN TWY" ? undefined : "BTN TWY");
               }} label="BTN TWY" />
-              <Input placeholder="A" className="w-9 h-9" />
+              <TaxiwayField 
+                disabled={position !== "BTN TWY"}
+                value={position === "BTN TWY" ? taxiways[0] : ""} 
+                onChange={(value) => {
+                  setTaxiways([value, taxiways[1]]);
+                }}
+              />
               <span>and</span>
-              <Input placeholder="B" className="w-9 h-9" />
+              <TaxiwayField 
+                disabled={position !== "BTN TWY"}
+                value={position === "BTN TWY" ? taxiways[1] ?? "" : ""} 
+                onChange={(value) => {
+                  setTaxiways([taxiways[0], value]);
+                }}
+              />
           </div>
           <div className="flex items-center gap-2 mt-2">
               <SwitchField checked={position === "FM TWY"} onClick={() => {
                 setPosition(position === "FM TWY" ? undefined : "FM TWY");
               }} label="FM TWY" />
-              <Input placeholder="A" className="w-9 h-9" />
+              <TaxiwayField 
+                disabled={position !== "FM TWY"}
+                value={position === "FM TWY" ? taxiways[0] : ""} 
+                onChange={(value) => {
+                  setTaxiways([value, undefined]);
+                }}
+              />
           </div>
           <div className="flex items-center gap-2 mt-2">
               <SwitchField checked={position === "BTN TWY AND RWY"} onClick={() => {
                 setPosition(position === "BTN TWY AND RWY" ? undefined : "BTN TWY AND RWY");
               }} label="BTN TWY" />
-              <Input placeholder="A" className="w-9 h-9" />
+              <TaxiwayField 
+                disabled={position !== "BTN TWY AND RWY"}
+                value={position === "BTN TWY AND RWY" ? taxiways[0] : ""} 
+                onChange={(value) => {
+                  setTaxiways([value, undefined]);
+                }}
+              />
               <span>AND RWY</span>
               <Combobox
+                disabled={position !== "BTN TWY AND RWY"}
                 items={runways}
                 value={selectedRunway}
                 onValueChange={(value) => {
@@ -284,7 +322,7 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
                   setSelectedRunway(value);
                 }}
               >
-              <ComboboxInput className="w-17" placeholder="Select runway here" />
+              <ComboboxInput className="w-17" placeholder="23" />
               <ComboboxContent>
                 <ComboboxList>
                   {(item) => (
@@ -299,5 +337,24 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+function TaxiwayField({ disabled = false, value, onChange }: { disabled?: boolean, value: string, onChange: (value: string) => void }) {
+  return (
+    <Input 
+      placeholder="A"
+      pattern="[A-Za-z]"
+      type="text" 
+      maxLength={1} 
+      className="w-9 h-9" 
+      value={value}  
+      disabled={disabled}
+      onInput={(e) => {
+        const el = e.currentTarget;
+        el.value = el.value.replace(/[^A-Za-z]/g, "");
+      }} 
+      onChange={(e) => onChange(e.target.value.toUpperCase())} 
+    />
   )
 }
