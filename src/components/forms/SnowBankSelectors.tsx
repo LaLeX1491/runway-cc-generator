@@ -8,7 +8,7 @@ import InputHeadline from '@/components/ui/InputHeadline';
 import {Switch} from '@/components/ui/switch';
 import {Input} from '@/components/ui/input';
 import Code from '@/components/ui/code';
-import {parseSnowBank} from '@/lib/parser';
+import {parseSnowBankOnRunway} from '@/lib/parser';
 import SwitchField from '../ui/SwitchField';
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '../ui/combobox';
 
@@ -123,7 +123,7 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
 
   const snowBankText = useMemo(() => {
     try {
-      return parseSnowBank(
+      return parseSnowBankOnRunway(
         runway,
         crossPosition,
         crossPosition === "L" || crossPosition === "LR" ? leftMarginFromCL : undefined,

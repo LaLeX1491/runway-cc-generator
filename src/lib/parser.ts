@@ -1,6 +1,6 @@
 import {SnowbankAlongPosition, SnowbankCrossPosition} from '@/lib/types';
 
-export function parseSnowBank(
+export function parseSnowBankOnRunway(
   runway: string,
   crossPosition: SnowbankCrossPosition,
   leftMarginFromCL?: number,
