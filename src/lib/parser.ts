@@ -21,7 +21,11 @@ export function parseSnowBankOnRunway(
       if(leftMarginFromCL && rightMarginFromCL || leftMarginFromCL === 0 || rightMarginFromCL === 0) {
 
         if(leftMarginFromCL === rightMarginFromCL) {
-          output += ` LR${leftMarginFromCL} FM CL`;
+          if(leftMarginFromCL === 0) {
+            output += ` LR FM CL`;
+          } else {
+            output += ` LR${leftMarginFromCL} FM CL`;
+          }
         } else {
           output += ` L${leftMarginFromCL} FM CL`;
           output += ` R${rightMarginFromCL} FM CL`;
