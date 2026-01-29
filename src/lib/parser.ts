@@ -1,4 +1,4 @@
-import {SnowbankAlongPosition, SnowbankCrossPosition} from '@/lib/types';
+import {SnowbankAlongPosition, SnowbankCrossPosition, TaxiwaySnowbankPosition} from '@/lib/types';
 
 export function parseSnowBankOnRunway(
   runway: string,
@@ -39,6 +39,35 @@ export function parseSnowBankOnRunway(
         } else throw new Error("Along position == BTN TWY but no taxiways set!");
       }
     }
+  }
+
+  return output += ".";
+}
+
+export function parseSnowBankOnTaxiway(
+  taxiway: string,
+  position: TaxiwaySnowbankPosition,
+  taxiways?: [string, string | undefined],
+  runway?: string,
+): string {
+  let output = `TWY ${taxiway} SNOW BANK`;
+
+  switch(position) {
+    case "FM TWY":
+      if(taxiways && taxiways[0]) {
+        output += ` FM TWY ${taxiways?.[0]}`;
+      } else throw new Error("Position == FM TWY but no taxiway set!");
+      break;
+    case "BTN TWY":
+      if(taxiways && taxiways[0] && taxiways?.[1]) {
+        output += ` BTN TWY ${taxiways[0]} AND ${taxiways[1]}`;
+      } else throw new Error("Position == BTN TWY but taxiways not set!");
+      break;
+    case "BTN TWY AND RWY":
+      if(runway && taxiways && taxiways[0]) {
+        output += ` BTN TWY ${taxiways[0]} AND RWY ${runway}`;
+      } else throw new Error("Position == BTN TWY AND RWY but no runway or taxiway set!");
+      break;
   }
 
   return output += ".";
