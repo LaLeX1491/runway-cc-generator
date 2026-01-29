@@ -96,7 +96,7 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
                 <SwitchField checked={includeItemO} onClick={() => setIncludeItemO(!includeItemO)} label={"Include item"} />
                 <FadeIn shown={includeItemO}>
                   <>
-                    <div className="flex w-1/3 justify-between">
+                    <div className="ml-[10%] flex flex-col w-1/3 justify-between">
                       {activeRunways.map((activeRunway) => (
                         <SwitchField
                           key={activeRunway}
@@ -121,6 +121,9 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
                     </FadeIn>
                   </>
                 </FadeIn>
+              </div>
+              <div>
+
               </div>
             </div>
           </CardContent>
