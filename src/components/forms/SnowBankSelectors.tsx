@@ -333,7 +333,7 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
                   setSelectedRunway(value);
                 }}
               >
-              <ComboboxInput className="w-17" placeholder="23" />
+              <ComboboxInput disabled={position !== "BTN TWY AND RWY"} className="w-17" placeholder={runways.length === 1 ? runways[0] : "Select runway"} />
               <ComboboxContent>
                 <ComboboxList>
                   {(item) => (
@@ -360,19 +360,29 @@ function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onC
 
 function TaxiwayField({ disabled = false, value, onChange }: { disabled?: boolean, value: string, onChange: (value: string) => void }) {
   return (
-    <Input 
+    <Input
+      className="w-13"
       placeholder="A"
-      pattern="[A-Za-z]"
-      type="text" 
-      maxLength={1} 
-      className="w-9 h-9" 
-      value={value}  
+      type="text"
+      maxLength={3}
+      pattern="^[A-Z](?:[A-Z0-9](?:[0-9])?)?$"
+      value={value}
       disabled={disabled}
       onInput={(e) => {
         const el = e.currentTarget;
-        el.value = el.value.replace(/[^A-Za-z]/g, "");
-      }} 
-      onChange={(e) => onChange(e.target.value.toUpperCase())} 
+        let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        v = v.slice(0, 3);
+
+        if (v.length >= 1 && !/^[A-Z]/.test(v)) {
+          v = "";
+        }
+        if (v.length === 3 && !/^[A-Z][A-Z0-9][0-9]$/.test(v)) {
+          v = v.slice(0, 2);
+        }
+
+        el.value = v;
+      }}
+      onChange={(e) => onChange(e.target.value)}
     />
   )
 }
