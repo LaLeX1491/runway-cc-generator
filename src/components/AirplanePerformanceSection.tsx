@@ -17,16 +17,16 @@ import {Input} from '@/components/ui/input';
 import InputHeadline from '@/components/ui/InputHeadline';
 
 export default function AirplanePerformanceSection({equalContamination = false}: { equalContamination?: boolean }) {
-  const [selectedCondition, setSelectedCondition] = useState<ConditionCode>("6");
+  const [selectedCondition, setSelectedCondition] = useState<ConditionCode>(6);
   const [contaminationType, setContaminationType] = useState<ContaminationType | null>(
-    selectedCondition === "6" ? getConditionCodeOptions("6")[0] ?? null : null
+    selectedCondition === 6 ? getConditionCodeOptions(6)[0] ?? null : null
   );
   const [contaminationLevel, setContaminationLevel] = useState<ContaminationLevel | null>(null);
   const [looseContaminationDepth, setLooseContaminationDepth] = useState<LooseContaminationDepth | null>(null);
 
   const setCondition = (cc: ConditionCode) => {
     if (cc !== selectedCondition) {
-      setContaminationType(cc === "6" ? getConditionCodeOptions("6")[0] ?? null : null);
+      setContaminationType(cc === 6 ? getConditionCodeOptions(6)[0] ?? null : null);
       setContaminationLevel(null);
       setSelectedCondition(cc);
     }
@@ -42,7 +42,7 @@ export default function AirplanePerformanceSection({equalContamination = false}:
           .map(Number)
           .sort((a, b) => b - a)
           .map((numKey) => {
-            const key = numKey.toString() as ConditionCode;
+            const key = numKey.toString() as unknown as ConditionCode;
             return (
               <Tooltip key={key}>
                 <TooltipTrigger asChild>
@@ -96,7 +96,7 @@ export default function AirplanePerformanceSection({equalContamination = false}:
         </div>
       </div>
 
-      {selectedCondition !== "6" && contaminationType && (
+      {selectedCondition !== 6 && contaminationType && (
         <div className="w-full justify-center flex flex-wrap">
           <div className="w-full max-w-xs">
             <Combobox
