@@ -5,7 +5,7 @@ export default function Code({text, copy = false, className = ""}: { text: strin
 
   const copyToClipboard = () => {
     if(copy) {
-      navigator.clipboard.writeText(text);
+      navigator.clipboard.writeText(text).then(() => {});
     }
   }
 
