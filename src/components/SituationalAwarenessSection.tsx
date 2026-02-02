@@ -21,7 +21,6 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
 
   const [runwayItemsFormState, setRunwayItemsFormState] = useState<Record<string, RunwayItemsFormState>>({});
 
-  // Berechne gültigen selectedRunway
   const validSelectedRunway = useMemo(() => {
     const currentSelected = Object.keys(runwayItemsFormState)[0];
     return activeRunways.includes(currentSelected) ? currentSelected : activeRunways[0];
@@ -29,7 +28,6 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
 
   const [selectedRunway, setSelectedRunway] = useState(validSelectedRunway);
 
-  // Synchronisiere runwayItemsFormState mit activeRunways
   const syncedRunwayItemsFormState = useMemo(() => {
     const newState: Record<string, RunwayItemsFormState> = {};
     activeRunways.forEach((runway) => {
@@ -44,7 +42,6 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
     return newState;
   }, [activeRunways, runwayItemsFormState]);
 
-  // Bereinige itemO
   const syncedItemO = useMemo(() => {
     return itemO.filter(runway => activeRunways.includes(runway));
   }, [itemO, activeRunways]);
@@ -59,7 +56,6 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
     }));
   };
 
-  // Aktualisiere selectedRunway wenn nicht mehr gültig
   const currentSelectedRunway = activeRunways.includes(selectedRunway) ? selectedRunway : activeRunways[0];
 
   return (
