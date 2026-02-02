@@ -7,15 +7,15 @@ import SwitchField from '@/components/ui/SwitchField';
 import FadeIn from '@/components/ui/FadeIn';
 import StaticItemSelector from '@/components/ui/StaticItemSelector';
 
-export default function RunwayItemsForm({
-  runway,
-  state,
-  onUpdate
-}: {
+type Props = {
   runway: string,
   state: RunwayItemsFormState,
-  onUpdate: (updates: Partial<RunwayItemsFormState>) => void
-}) {
+  onUpdate: (updates: Partial<RunwayItemsFormState>) => void,
+  includeItemJ: boolean,
+  onItemJChange: (value: boolean) => void
+}
+
+export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, onItemJChange}: Props) {
 
   return (
     <div className="flex-col flex gap-2 mb-2">
@@ -49,12 +49,12 @@ export default function RunwayItemsForm({
       </div>
 
       <StaticItemSelector
-        content={"RWY " + runway + " DRIFTING SNOW."}
-        title="Drifting snow on the runway"
-        tooltip="Item J: Drifting snow on the runway"
+        content="DRIFTING SNOW."
+        title="Drifting snow on the aerodrome"
+        tooltip="Item J: Drifting snow on the aerodrome (not runway-specific)"
         linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=REDUCED%20TO%202000%22-,Item%20J,-.%20Drifting%20snow%20on"
-        value={state.includeItemJ}
-        toggleContent={() => onUpdate({ includeItemJ: !state.includeItemJ })}
+        value={includeItemJ}
+        toggleContent={() => onItemJChange(!includeItemJ)}
       />
 
       <StaticItemSelector

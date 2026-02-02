@@ -1,6 +1,6 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
-import { useState, useMemo} from 'react';
-import RunwayItemsForm from '@/components/forms/SituationalAwarenessForms';
+import { useState, useMemo, useEffect} from 'react';
+import RunwayItemsForm from '@/components/forms/RunwayItemsForm';
 import {Card, CardContent} from '@/components/ui/card';
 import { RunwayItemsFormState } from '@/lib/types';
 import { SnowbankOnTaxiwaySelector } from './forms/SnowBankSelectors';
@@ -9,8 +9,30 @@ import InputHeadline from '@/components/ui/InputHeadline';
 import FadeIn from '@/components/ui/FadeIn';
 import Code from '@/components/ui/code';
 import {ApronConditionsSelector, TaxiwayConditionsSelector} from '@/components/forms/ApronConditions';
+import {Input} from '@/components/ui/input';
+import {Combobox, ComboboxInput} from '@/components/ui/combobox';
 
-export default function SituationalAwarenessSection({activeRunways}: {activeRunways: string[]}) {
+export interface SituationalAwarenessData {
+  runwayItems: Record<string, RunwayItemsFormState>;
+  includeItemJ: boolean;
+  includeItemN: boolean;
+  includeItemO: boolean;
+  itemO: string[];
+  includeItemP: boolean;
+  itemP: string[];
+  includeItemR: boolean;
+  itemR: string[];
+  itemT: string;
+}
+
+export default function SituationalAwarenessSection({
+                                                      activeRunways,
+                                                      onChange
+                                                    }: {
+  activeRunways: string[];
+  onChange?: (data: SituationalAwarenessData) => void;
+}) {
+  const [includeItemJ, setIncludeItemJ] = useState<boolean>(false);
   const [includeItemN, setIncludeItemN] = useState<boolean>(false);
   const [includeItemO, setIncludeItemO] = useState<boolean>(false);
   const [itemO, setItemO] = useState<string[]>([]);
@@ -18,6 +40,7 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
   const [itemP, setItemP] = useState<string[]>([]);
   const [includeItemR, setIncludeItemR] = useState<boolean>(false);
   const [itemR, setItemR] = useState<string[]>([]);
+  const [itemT, setItemT] = useState<string>("");
 
   const [runwayItemsFormState, setRunwayItemsFormState] = useState<Record<string, RunwayItemsFormState>>({});
 
@@ -58,6 +81,23 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
 
   const currentSelectedRunway = activeRunways.includes(selectedRunway) ? selectedRunway : activeRunways[0];
 
+  useEffect(() => {
+    if (onChange) {
+      onChange({
+        runwayItems: syncedRunwayItemsFormState,
+        includeItemJ,
+        includeItemN,
+        includeItemO,
+        itemO: syncedItemO,
+        includeItemP,
+        itemP,
+        includeItemR,
+        itemR,
+        itemT
+      });
+    }
+  }, [syncedRunwayItemsFormState, includeItemJ, includeItemN, includeItemO, syncedItemO, includeItemP, itemP, includeItemR, itemR, itemT, onChange]);
+
   return (
     <section className="w-full flex justify-center items-center flex-col">
       <h1>Here you can select multiple optional items like treatment of the runways, taxiway and apron closures & more.</h1>
@@ -78,7 +118,13 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
             {activeRunways.map((runway) => (
               <TabsContent key={runway} value={runway} className="w-full flex flex-col">
                 {syncedRunwayItemsFormState[runway] && (
-                  <RunwayItemsForm runway={runway} state={syncedRunwayItemsFormState[runway]} onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)} />
+                  <RunwayItemsForm
+                    runway={runway}
+                    state={syncedRunwayItemsFormState[runway]}
+                    onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)}
+                    includeItemJ={includeItemJ}
+                    onItemJChange={setIncludeItemJ}
+                  />
                 )}
               </TabsContent>
             ))}
@@ -134,8 +180,21 @@ export default function SituationalAwarenessSection({activeRunways}: {activeRunw
                 <InputHeadline title={"Apron conditions"} tooltip={"EDIT APN COND"} linkToIcao={""} />
                 <SwitchField checked={includeItemR} onClick={() => setIncludeItemR(!includeItemR)} label={"Include item"} />
                 <FadeIn shown={includeItemR}>
-                  <ApronConditionsSelector value={itemR} onChange={setItemP} />
+                  <ApronConditionsSelector value={itemR} onChange={setItemR} />
                 </FadeIn>
+              </div>
+              <div>
+                <InputHeadline title="Measured friction coefficient (not applicable in germany)" tooltip="ICAO Item S. NOT APPLICABLE IN GERMANY!" linkToIcao={"Items"} />
+                <div className="flex gap-2">
+                  <Input disabled placeholder="Coefficient" className="w-1/2" />
+                  <Combobox>
+                    <ComboboxInput disabled placeholder="Measurement device" className="w-1/2" />
+                  </Combobox>
+                </div>
+              </div>
+              <div>
+                <InputHeadline title="Freetext" tooltip="ICAO item T - Freetext" linkToIcao="ITEM T" />
+                <Input value={itemT} onInput={(e) => setItemT(e.currentTarget.value)} placeholder="Freetext" />
               </div>
             </div>
           </CardContent>

@@ -8,7 +8,7 @@ export default function StaticItemSelector({content, title, tooltip, linkToIcao,
       <InputHeadline title={title} tooltip={tooltip} linkToIcao={linkToIcao} />
       <SwitchField checked={value} onClick={toggleContent} label="Include item" />
       <div className={`transition-opacity duration-300 ${value ? "opacity-100" : "opacity-0 h-0 overflow-hidden"}`}>
-        {value && <Code className="mt-2" text={content} />}
+        {value && <Code text={content} />}
       </div>
     </div>
   );
