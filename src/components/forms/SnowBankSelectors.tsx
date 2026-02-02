@@ -10,22 +10,45 @@ import SwitchField from '../ui/SwitchField';
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '../ui/combobox';
 import ListSelector from '@/components/forms/ListSelector';
 import TaxiwayField from '@/components/ui/TaxiwayField';
+import {Card} from '@/components/ui/card';
 
-export default function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
+export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { runways: string[], value?: string[], onChange?: (value: string[]) => void }) {
   return (
-    <ListSelector
-      value={value}
-      maxItems={5}
-      onChange={onChange}
-      itemType="snowbank"
-      getItemTitle={(index) => `Snowbank ${index + 1}`}
-      renderItem={(_, onItemChange) => (
-        <RunwaySnowBankSelector
-          runway={runway}
-          onChange={onItemChange}
-        />
-      )}
-    />
+    <Card>
+      <ListSelector
+        value={value}
+        onChange={onChange}
+        maxItems={10}
+        itemType="snowbank"
+        getItemTitle={(index) => `Snowbank ${index + 1}`}
+        renderItem={(_, onItemChange) => (
+          <TaxiwaySnowBankSelector
+            runways={runways}
+            onChange={onItemChange}
+          />
+        )}
+      />
+    </Card>
+  );
+}
+
+export function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
+  return (
+    <Card>
+      <ListSelector
+        value={value}
+        maxItems={5}
+        onChange={onChange}
+        itemType="snowbank"
+        getItemTitle={(index) => `Snowbank ${index + 1}`}
+        renderItem={(_, onItemChange) => (
+          <RunwaySnowBankSelector
+            runway={runway}
+            onChange={onItemChange}
+          />
+        )}
+      />
+    </Card>
   );
 }
 
@@ -172,30 +195,17 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   )
 }
 
-export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { runways: string[], value?: string[], onChange?: (value: string[]) => void }) {
-  return (
-    <ListSelector
-      value={value}
-      onChange={onChange}
-      maxItems={10}
-      itemType="snowbank"
-      getItemTitle={(index) => `Snowbank ${index + 1}`}
-      renderItem={(_, onItemChange) => (
-        <TaxiwaySnowBankSelector
-          runways={runways}
-          onChange={onItemChange}
-        />
-      )}
-    />
-  );
-}
-
 function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onChange?: (value: string | null) => void }) {
   const [taxiway, setTaxiway] = useState<string>("");
-  const [position, setPosition] = useState<TaxiwaySnowbankPosition>(undefined);
+  const [position, setTWYPosition] = useState<TaxiwaySnowbankPosition>(undefined);
   const [taxiways, setTaxiways] = useState<[string, string | undefined]>(["", undefined]);
   const [selectedRunway, setSelectedRunway] = useState<string>("");
   const prevTextRef = useRef<string | undefined>(undefined);
+
+  const setPosition = (value: TaxiwaySnowbankPosition) => {
+    setTaxiways(["", undefined]);
+    setTWYPosition(value);
+  }
 
   const snowBankText = useMemo(() => {
     if (!taxiway || taxiway.trim() === "") return undefined;

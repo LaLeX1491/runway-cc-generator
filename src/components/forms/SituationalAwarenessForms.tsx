@@ -1,7 +1,7 @@
 import InputHeadline from '@/components/ui/InputHeadline';
 import { Input } from '@/components/ui/input';
 import Code from '@/components/ui/code';
-import SnowBankOnRunwaySelector from '@/components/forms/SnowBankSelectors';
+import { SnowBankOnRunwaySelector } from '@/components/forms/SnowBankSelectors';
 import { RunwayItemsFormState } from '@/lib/types';
 import SwitchField from '@/components/ui/SwitchField';
 import FadeIn from '@/components/ui/FadeIn';
