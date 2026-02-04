@@ -1,3 +1,5 @@
+import {useState} from 'react';
+
 export type ConditionCode = 6 | 5 | 4 | 3 | 2 | 1 | 0;
 export type ContaminationLevel = "NR" | "25" | "50" | "75" | "100";
 export type RunwayZone = "TDZ" | "MID" | "END";
@@ -34,5 +36,17 @@ export type RunwayItemsFormState = {
   includeItemK: boolean,
   includeItemL: boolean,
   includeItemM: boolean,
-  itemM?: string,
+  itemM?: string[],
+}
+export interface SituationalAwarenessData {
+  runwayItems: Record<string, RunwayItemsFormState>;
+  includeItemJ: boolean;
+  includeItemN: boolean;
+  includeItemO: boolean;
+  itemO: string[];
+  includeItemP: boolean;
+  itemP: string[];
+  includeItemR: boolean;
+  itemR: string[];
+  itemT: string;
 }

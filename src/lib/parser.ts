@@ -1,4 +1,9 @@
-import {SnowbankAlongPosition, SnowbankCrossPosition, TaxiwaySnowbankPosition} from '@/lib/types';
+import {
+  SituationalAwarenessData,
+  SnowbankAlongPosition,
+  SnowbankCrossPosition,
+  TaxiwaySnowbankPosition
+} from '@/lib/types';
 
 export function parseSnowBankOnRunway(
   runway: string,
@@ -77,4 +82,52 @@ export function parseSnowBankOnTaxiway(
   }
 
   return output += ".";
+}
+
+export function parseSituationalAwareness(data: SituationalAwarenessData): string {
+  if(!data) return "";
+  let driftingSnowIncluded = false;
+
+  const parts: string[] = [];
+
+  Object.entries(data.runwayItems).forEach(([runway, items]) => {
+    if(items.includeItemI && items.itemI)
+      parts.push(`RWY ${runway} REDUCED TO ${items.itemI} METERS.`);
+
+    if(!driftingSnowIncluded && data.includeItemJ) {
+      parts.push(`DRIFTING SNOW.`);
+      driftingSnowIncluded = true;
+    }
+
+    if(items.includeItemK)
+      parts.push(`RWY ${runway} LOOSE SAND.`);
+
+    if(items.includeItemL)
+      parts.push(`RWY ${runway} CHEMICALLY TREATED.`);
+
+    if(items.includeItemM)
+      items.itemM?.forEach(itemM => {
+        parts.push(itemM);
+      })
+  });
+
+  if(data.includeItemO && data.itemO.length > 0) {
+    data.itemO.forEach((runway) => {
+      parts.push(`RWY ${runway} ADJ SNOW BANK.`);
+    })
+  }
+
+  data.itemP.forEach((twyCond) => {
+    parts.push(twyCond);
+  });
+
+  data.itemR.forEach((apnCond) => {
+    parts.push(apnCond);
+  });
+
+  if (data.itemT.trim()) {
+    parts.push(data.itemT.trim());
+  }
+
+  return parts.join(" ");
 }

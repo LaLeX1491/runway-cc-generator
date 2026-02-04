@@ -2,7 +2,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import { useState, useMemo, useEffect} from 'react';
 import RunwayItemsForm from '@/components/forms/RunwayItemsForm';
 import {Card, CardContent} from '@/components/ui/card';
-import { RunwayItemsFormState } from '@/lib/types';
+import {RunwayItemsFormState, SituationalAwarenessData} from '@/lib/types';
 import { SnowbankOnTaxiwaySelector } from './forms/SnowBankSelectors';
 import SwitchField from '@/components/ui/SwitchField';
 import InputHeadline from '@/components/ui/InputHeadline';
@@ -11,27 +11,9 @@ import Code from '@/components/ui/code';
 import {ApronConditionsSelector, TaxiwayConditionsSelector} from '@/components/forms/ApronConditions';
 import {Input} from '@/components/ui/input';
 import {Combobox, ComboboxInput} from '@/components/ui/combobox';
+import {parseSituationalAwareness} from '@/lib/parser';
 
-export interface SituationalAwarenessData {
-  runwayItems: Record<string, RunwayItemsFormState>;
-  includeItemJ: boolean;
-  includeItemN: boolean;
-  includeItemO: boolean;
-  itemO: string[];
-  includeItemP: boolean;
-  itemP: string[];
-  includeItemR: boolean;
-  itemR: string[];
-  itemT: string;
-}
-
-export default function SituationalAwarenessSection({
-                                                      activeRunways,
-                                                      onChange
-                                                    }: {
-  activeRunways: string[];
-  onChange?: (data: SituationalAwarenessData) => void;
-}) {
+export default function SituationalAwarenessSection({activeRunways, onChange}: { activeRunways: string[]; onChange?: (data: SituationalAwarenessData) => void; }) {
   const [includeItemJ, setIncludeItemJ] = useState<boolean>(false);
   const [includeItemN, setIncludeItemN] = useState<boolean>(false);
   const [includeItemO, setIncludeItemO] = useState<boolean>(false);
@@ -81,22 +63,26 @@ export default function SituationalAwarenessSection({
 
   const currentSelectedRunway = activeRunways.includes(selectedRunway) ? selectedRunway : activeRunways[0];
 
+  const currentData: SituationalAwarenessData = useMemo(() => ({
+    runwayItems: syncedRunwayItemsFormState,
+    includeItemJ,
+    includeItemN,
+    includeItemO,
+    itemO: syncedItemO,
+    includeItemP,
+    itemP,
+    includeItemR,
+    itemR,
+    itemT
+  }), [syncedRunwayItemsFormState, includeItemJ, includeItemN, includeItemO, syncedItemO, includeItemP, itemP, includeItemR, itemR, itemT]);
+
   useEffect(() => {
     if (onChange) {
-      onChange({
-        runwayItems: syncedRunwayItemsFormState,
-        includeItemJ,
-        includeItemN,
-        includeItemO,
-        itemO: syncedItemO,
-        includeItemP,
-        itemP,
-        includeItemR,
-        itemR,
-        itemT
-      });
+      onChange(currentData);
     }
-  }, [syncedRunwayItemsFormState, includeItemJ, includeItemN, includeItemO, syncedItemO, includeItemP, itemP, includeItemR, itemR, itemT, onChange]);
+  }, [currentData, onChange]);
+
+  const parsedOutput = useMemo(() => parseSituationalAwareness(currentData), [currentData]);
 
   return (
     <section className="w-full flex justify-center items-center flex-col">
@@ -142,31 +128,33 @@ export default function SituationalAwarenessSection({
                 <InputHeadline title={"Snowbanks adjacent to the runway"} tooltip={"Include item O"} linkToIcao={"item O"} />
                 <SwitchField checked={includeItemO} onClick={() => setIncludeItemO(!includeItemO)} label={"Include item"} />
                 <FadeIn shown={includeItemO}>
-                  <>
-                    <div className="ml-[10%] flex flex-col w-1/3 justify-between">
-                      {activeRunways.map((activeRunway) => (
-                        <SwitchField
-                          key={activeRunway}
-                          checked={syncedItemO.includes(activeRunway)}
-                          onClick={() => {
-                            setItemO(prev =>
-                              prev.includes(activeRunway)
-                                ? prev.filter(item => item !== activeRunway)
-                                : [...prev, activeRunway]
-                            );
-                          }}
-                          label={"RWY " + activeRunway}
-                        />
-                      ))}
-                    </div>
-                    <FadeIn className="mt-2" shown={itemO.length > 0} >
-                      <Code
-                        text={itemO
-                          .map(s => (s != null ? "RWY " + s + " ADJ SNOW BANK." + "\n" : ""))
-                          .join("")
-                        } />
-                    </FadeIn>
-                  </>
+                  <Card>
+                    <CardContent>
+                      <div className="flex gap-2">
+                        {activeRunways.map((activeRunway) => (
+                          <SwitchField
+                            key={activeRunway}
+                            checked={syncedItemO.includes(activeRunway)}
+                            onClick={() => {
+                              setItemO(prev =>
+                                prev.includes(activeRunway)
+                                  ? prev.filter(item => item !== activeRunway)
+                                  : [...prev, activeRunway]
+                              );
+                            }}
+                            label={"RWY " + activeRunway}
+                          />
+                        ))}
+                      </div>
+                      <FadeIn className="mt-2" shown={itemO.length > 0} >
+                        <Code
+                          text={itemO
+                            .map(s => (s != null ? "RWY " + s + " ADJ SNOW BANK." + "\n" : ""))
+                            .join("")
+                          } />
+                      </FadeIn>
+                    </CardContent>
+                  </Card>
                 </FadeIn>
               </div>
               <div>
@@ -200,6 +188,15 @@ export default function SituationalAwarenessSection({
           </CardContent>
         </Card>
       </Tabs>
+
+      <div className="w-1/2 mt-4">
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="font-bold mb-2">Generated Output:</h2>
+            <Code text={parsedOutput || "No data selected"} />
+          </CardContent>
+        </Card>
+      </div>
     </section>
   )
 }

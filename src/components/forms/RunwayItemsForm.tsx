@@ -89,6 +89,8 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
         {state.includeItemM && (
           <SnowBankOnRunwaySelector
             runway={runway}
+            value={state.itemM || []}
+            onChange={(value) => onUpdate({ itemM: value})}
           />
         )}
       </div>
