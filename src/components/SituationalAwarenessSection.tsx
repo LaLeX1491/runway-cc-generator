@@ -1,8 +1,7 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
-import { useState, useMemo, useEffect} from 'react';
+import { useState, useMemo } from 'react';
 import RunwayItemsForm from '@/components/forms/RunwayItemsForm';
 import {Card, CardContent} from '@/components/ui/card';
-import {RunwayItemsFormState, SituationalAwarenessData} from '@/lib/types';
 import { SnowbankOnTaxiwaySelector } from './forms/SnowBankSelectors';
 import SwitchField from '@/components/ui/SwitchField';
 import InputHeadline from '@/components/ui/InputHeadline';
@@ -11,78 +10,36 @@ import Code from '@/components/ui/code';
 import {ApronConditionsSelector, TaxiwayConditionsSelector} from '@/components/forms/ApronConditions';
 import {Input} from '@/components/ui/input';
 import {Combobox, ComboboxInput} from '@/components/ui/combobox';
-import {parseSituationalAwareness} from '@/lib/parser';
+import {useData} from '@/context/DataProvider';
 
-export default function SituationalAwarenessSection({activeRunways, onChange}: { activeRunways: string[]; onChange?: (data: SituationalAwarenessData) => void; }) {
-  const [includeItemJ, setIncludeItemJ] = useState<boolean>(false);
-  const [includeItemN, setIncludeItemN] = useState<boolean>(false);
-  const [includeItemO, setIncludeItemO] = useState<boolean>(false);
-  const [itemO, setItemO] = useState<string[]>([]);
-  const [includeItemP, setIncludeItemP] = useState<boolean>(false);
-  const [itemP, setItemP] = useState<string[]>([]);
-  const [includeItemR, setIncludeItemR] = useState<boolean>(false);
-  const [itemR, setItemR] = useState<string[]>([]);
-  const [itemT, setItemT] = useState<string>("");
-
-  const [runwayItemsFormState, setRunwayItemsFormState] = useState<Record<string, RunwayItemsFormState>>({});
+export default function SituationalAwarenessSection() {
+  const {
+    activeRunways,
+    situationalAwarenessData,
+    parsedOutput,
+    updateRunwayItems,
+    setIncludeItemJ,
+    setIncludeItemN,
+    setItemN,
+    setIncludeItemO,
+    toggleItemO,
+    setIncludeItemP,
+    setItemP,
+    setItemPAllTaxiways,
+    setIncludeItemR,
+    setItemR,
+    setItemRAllAprons,
+    setItemT
+  } = useData();
 
   const validSelectedRunway = useMemo(() => {
-    const currentSelected = Object.keys(runwayItemsFormState)[0];
+    const currentSelected = Object.keys(situationalAwarenessData.runwayItems)[0];
     return activeRunways.includes(currentSelected) ? currentSelected : activeRunways[0];
-  }, [activeRunways, runwayItemsFormState]);
+  }, [activeRunways, situationalAwarenessData.runwayItems]);
 
   const [selectedRunway, setSelectedRunway] = useState(validSelectedRunway);
 
-  const syncedRunwayItemsFormState = useMemo(() => {
-    const newState: Record<string, RunwayItemsFormState> = {};
-    activeRunways.forEach((runway) => {
-      newState[runway] = runwayItemsFormState[runway] || {
-        includeItemI: false,
-        includeItemJ: false,
-        includeItemK: false,
-        includeItemL: false,
-        includeItemM: false,
-      };
-    });
-    return newState;
-  }, [activeRunways, runwayItemsFormState]);
-
-  const syncedItemO = useMemo(() => {
-    return itemO.filter(runway => activeRunways.includes(runway));
-  }, [itemO, activeRunways]);
-
-  const updateRunwayItemsFormState = (runway: string, updates: Partial<RunwayItemsFormState>) => {
-    setRunwayItemsFormState(prev => ({
-      ...prev,
-      [runway]: {
-        ...prev[runway],
-        ...updates
-      }
-    }));
-  };
-
   const currentSelectedRunway = activeRunways.includes(selectedRunway) ? selectedRunway : activeRunways[0];
-
-  const currentData: SituationalAwarenessData = useMemo(() => ({
-    runwayItems: syncedRunwayItemsFormState,
-    includeItemJ,
-    includeItemN,
-    includeItemO,
-    itemO: syncedItemO,
-    includeItemP,
-    itemP,
-    includeItemR,
-    itemR,
-    itemT
-  }), [syncedRunwayItemsFormState, includeItemJ, includeItemN, includeItemO, syncedItemO, includeItemP, itemP, includeItemR, itemR, itemT]);
-
-  useEffect(() => {
-    if (onChange) {
-      onChange(currentData);
-    }
-  }, [currentData, onChange]);
-
-  const parsedOutput = useMemo(() => parseSituationalAwareness(currentData), [currentData]);
 
   return (
     <section className="w-full flex justify-center items-center flex-col">
@@ -103,12 +60,12 @@ export default function SituationalAwarenessSection({activeRunways, onChange}: {
           <CardContent>
             {activeRunways.map((runway) => (
               <TabsContent key={runway} value={runway} className="w-full flex flex-col">
-                {syncedRunwayItemsFormState[runway] && (
+                {situationalAwarenessData.runwayItems[runway] && (
                   <RunwayItemsForm
                     runway={runway}
-                    state={syncedRunwayItemsFormState[runway]}
-                    onUpdate={(updates) => updateRunwayItemsFormState(runway, updates)}
-                    includeItemJ={includeItemJ}
+                    state={situationalAwarenessData.runwayItems[runway]}
+                    onUpdate={(updates) => updateRunwayItems(runway, updates)}
+                    includeItemJ={situationalAwarenessData.includeItemJ}
                     onItemJChange={setIncludeItemJ}
                   />
                 )}
@@ -118,38 +75,32 @@ export default function SituationalAwarenessSection({activeRunways, onChange}: {
             <div className="flex flex-col gap-2">
               <div>
                 <InputHeadline title={"Snowbanks on taxiways"} tooltip={"Include item N"} linkToIcao={"item N"} />
-                <SwitchField checked={includeItemN} onClick={() => setIncludeItemN(!includeItemN)} label={"Include item"} />
-                <FadeIn shown={includeItemN}>
-                  <SnowbankOnTaxiwaySelector runways={activeRunways} />
+                <SwitchField checked={situationalAwarenessData.includeItemN} onClick={() => setIncludeItemN(!situationalAwarenessData.includeItemN)} label={"Include item"} />
+                <FadeIn shown={situationalAwarenessData.includeItemN}>
+                  <SnowbankOnTaxiwaySelector runways={activeRunways} value={situationalAwarenessData.itemN || []} onChange={setItemN} />
                 </FadeIn>
               </div>
 
               <div>
                 <InputHeadline title={"Snowbanks adjacent to the runway"} tooltip={"Include item O"} linkToIcao={"item O"} />
-                <SwitchField checked={includeItemO} onClick={() => setIncludeItemO(!includeItemO)} label={"Include item"} />
-                <FadeIn shown={includeItemO}>
+                <SwitchField checked={situationalAwarenessData.includeItemO} onClick={() => setIncludeItemO(!situationalAwarenessData.includeItemO)} label={"Include item"} />
+                <FadeIn shown={situationalAwarenessData.includeItemO}>
                   <Card>
                     <CardContent>
                       <div className="flex gap-2">
                         {activeRunways.map((activeRunway) => (
                           <SwitchField
                             key={activeRunway}
-                            checked={syncedItemO.includes(activeRunway)}
-                            onClick={() => {
-                              setItemO(prev =>
-                                prev.includes(activeRunway)
-                                  ? prev.filter(item => item !== activeRunway)
-                                  : [...prev, activeRunway]
-                              );
-                            }}
+                            checked={situationalAwarenessData.itemO.includes(activeRunway)}
+                            onClick={() => toggleItemO(activeRunway)}
                             label={"RWY " + activeRunway}
                           />
                         ))}
                       </div>
-                      <FadeIn className="mt-2" shown={itemO.length > 0} >
+                      <FadeIn className="mt-2" shown={situationalAwarenessData.itemO.length > 0} >
                         <Code
-                          text={itemO
-                            .map(s => (s != null ? "RWY " + s + " ADJ SNOW BANK." + "\n" : ""))
+                          text={situationalAwarenessData.itemO
+                            .map((s: any) => "RWY " + s + " ADJ SNOW BANK.\n")
                             .join("")
                           } />
                       </FadeIn>
@@ -159,16 +110,26 @@ export default function SituationalAwarenessSection({activeRunways, onChange}: {
               </div>
               <div>
                 <InputHeadline title={"Taxiway conditions"} tooltip={"EDIT TWY COND"} linkToIcao={""} />
-                <SwitchField checked={includeItemP} onClick={() => setIncludeItemP(!includeItemP)} label={"Include item"} />
-                <FadeIn shown={includeItemP}>
-                  <TaxiwayConditionsSelector value={itemP} onChange={setItemP} />
+                <SwitchField checked={situationalAwarenessData.includeItemP} onClick={() => setIncludeItemP(!situationalAwarenessData.includeItemP)} label={"Include item"} />
+                <FadeIn shown={situationalAwarenessData.includeItemP}>
+                  <TaxiwayConditionsSelector
+                    value={situationalAwarenessData.itemP || []}
+                    onChange={setItemP}
+                    allTaxiwaysValue={situationalAwarenessData.itemPAllTaxiways}
+                    onAllTaxiwaysChange={setItemPAllTaxiways}
+                  />
                 </FadeIn>
               </div>
               <div>
                 <InputHeadline title={"Apron conditions"} tooltip={"EDIT APN COND"} linkToIcao={""} />
-                <SwitchField checked={includeItemR} onClick={() => setIncludeItemR(!includeItemR)} label={"Include item"} />
-                <FadeIn shown={includeItemR}>
-                  <ApronConditionsSelector value={itemR} onChange={setItemR} />
+                <SwitchField checked={situationalAwarenessData.includeItemR} onClick={() => setIncludeItemR(!situationalAwarenessData.includeItemR)} label={"Include item"} />
+                <FadeIn shown={situationalAwarenessData.includeItemR}>
+                  <ApronConditionsSelector
+                    value={situationalAwarenessData.itemR || []}
+                    onChange={setItemR}
+                    allApronsValue={situationalAwarenessData.itemRAllAprons}
+                    onAllApronsChange={setItemRAllAprons}
+                  />
                 </FadeIn>
               </div>
               <div>
@@ -182,7 +143,7 @@ export default function SituationalAwarenessSection({activeRunways, onChange}: {
               </div>
               <div>
                 <InputHeadline title="Freetext" tooltip="ICAO item T - Freetext" linkToIcao="ITEM T" />
-                <Input value={itemT} onInput={(e) => setItemT(e.currentTarget.value)} placeholder="Freetext" />
+                <Input value={situationalAwarenessData.itemT} onInput={(e) => setItemT(e.currentTarget.value)} placeholder="Freetext" />
               </div>
             </div>
           </CardContent>
@@ -193,7 +154,7 @@ export default function SituationalAwarenessSection({activeRunways, onChange}: {
         <Card>
           <CardContent className="pt-6">
             <h2 className="font-bold mb-2">Generated Output:</h2>
-            <Code text={parsedOutput || "No data selected"} />
+            <Code text={parsedOutput.situationalAwareness || "No data selected"} />
           </CardContent>
         </Card>
       </div>

@@ -8,15 +8,14 @@ import FadeIn from '@/components/ui/FadeIn';
 import StaticItemSelector from '@/components/ui/StaticItemSelector';
 
 type Props = {
-  runway: string,
-  state: RunwayItemsFormState,
-  onUpdate: (updates: Partial<RunwayItemsFormState>) => void,
-  includeItemJ: boolean,
-  onItemJChange: (value: boolean) => void
+  runway: string;
+  state: RunwayItemsFormState;
+  onUpdate: (updates: Partial<RunwayItemsFormState>) => void;
+  includeItemJ: boolean;
+  onItemJChange: (value: boolean) => void;
 }
 
-export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, onItemJChange}: Props) {
-
+export default function RunwayItemsForm({ runway, state, onUpdate, includeItemJ, onItemJChange }: Props) {
   return (
     <div className="flex-col flex gap-2 mb-2">
       <div>
@@ -30,7 +29,7 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
           onClick={() => onUpdate({ includeItemI: !state.includeItemI })}
           label="Include item"
         />
-        {state.includeItemI && (
+        <FadeIn shown={state.includeItemI}>
           <div className="mt-2">
             <Input
               placeholder="Remaining runway length"
@@ -45,7 +44,7 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
               <Code className="mt-2" text={`RWY ${runway} REDUCED TO ${state.itemI} METERS.`} />
             </FadeIn>
           </div>
-        )}
+        </FadeIn>
       </div>
 
       <StaticItemSelector
@@ -58,7 +57,7 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
       />
 
       <StaticItemSelector
-        content={"RWY " + runway + " LOOSE SAND."}
+        content={`RWY ${runway} LOOSE SAND.`}
         title="Loose sand"
         tooltip="Item K: Loose sand on the runway"
         linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=example%3A%20%22DRIFTING%20SNOW%22.-,Item%20K,-.%20Loose%20sand%20on"
@@ -67,7 +66,7 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
       />
 
       <StaticItemSelector
-        content={"RWY " + runway + " CHEMICALLY TREATED."}
+        content={`RWY ${runway} CHEMICALLY TREATED.`}
         title="Runway chemical treatment"
         tooltip="Item L: Chemical treatment on the runway"
         linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=09%20LOOSE%20SAND%22-,Item%20L,-.%20Chemical%20treatment%20o"
@@ -86,13 +85,13 @@ export default function RunwayItemsForm({runway, state, onUpdate, includeItemJ, 
           onClick={() => onUpdate({ includeItemM: !state.includeItemM })}
           label="Include item"
         />
-        {state.includeItemM && (
+        <FadeIn shown={state.includeItemM}>
           <SnowBankOnRunwaySelector
             runway={runway}
-            value={state.itemM || []}
-            onChange={(value) => onUpdate({ itemM: value})}
+            value={state.itemM ?? []}
+            onChange={(value) => onUpdate({ itemM: value })}
           />
-        )}
+        </FadeIn>
       </div>
     </div>
   );

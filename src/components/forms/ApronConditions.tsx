@@ -1,7 +1,7 @@
 import SwitchField from '@/components/ui/SwitchField';
-import {useEffect, useMemo, useRef, useState} from 'react';
-import {ConditionCode} from '@/lib/types';
-import {Card, CardContent, CardHeader} from '@/components/ui/card';
+import { useMemo, useState } from 'react';
+import { ConditionCode, TaxiwayCondition, ApronCondition } from '@/lib/types';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import ListSelector from '@/components/forms/ListSelector';
 import {
   Combobox,
@@ -10,142 +10,242 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox';
-import {CONDITION_CODES} from '@/lib/data';
+import { CONDITION_CODES } from '@/lib/data';
 import FadeIn from '@/components/ui/FadeIn';
-import {clsx} from 'clsx';
+import { clsx } from 'clsx';
 import TaxiwayField from '@/components/ui/TaxiwayField';
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import Code from '@/components/ui/code';
 
-export function TaxiwayConditionsSelector({value = [], onChange}: {value: string[], onChange?: (value: string[]) => void}) {
-  const [allTaxiways, setAllTaxiways] = useState<boolean>(false);
-  const [allTaxiwaysCondition, setAllTaxiwaysCondition] = useState<ConditionCode | null>(null);
+// ---------------------------------------------------------------------------
+// Taxiway Conditions
+// ---------------------------------------------------------------------------
+
+type TaxiwayConditionsSelectorProps = {
+  value: TaxiwayCondition[];
+  onChange?: (value: TaxiwayCondition[]) => void;
+  allTaxiwaysValue?: ConditionCode;
+  onAllTaxiwaysChange?: (value: ConditionCode | undefined) => void;
+}
+
+export function TaxiwayConditionsSelector({
+                                            value = [],
+                                            onChange,
+                                            allTaxiwaysValue,
+                                            onAllTaxiwaysChange,
+                                          }: TaxiwayConditionsSelectorProps) {
+  const [allTaxiways, setAllTaxiways] = useState<boolean>(!!allTaxiwaysValue);
+
+  const handleAllTaxiwaysToggle = () => {
+    const next = !allTaxiways;
+    setAllTaxiways(next);
+    if (!next) onAllTaxiwaysChange?.(undefined);
+  };
 
   return (
     <Card className={clsx("mt-2", allTaxiways && "!pb-0")}>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <SwitchField checked={allTaxiways} onClick={() => setAllTaxiways(!allTaxiways)} label="ALL TWYS" />
+          <SwitchField checked={allTaxiways} onClick={handleAllTaxiwaysToggle} label="ALL TWYS" />
           <CCSelector
-            value={allTaxiwaysCondition?.toString() ?? ""}
+            value={allTaxiwaysValue?.toString() ?? ""}
             disabled={!allTaxiways}
-            onValueChange={(value) => setAllTaxiwaysCondition(value?.toString() as unknown as ConditionCode)}
+            onValueChange={(v) => onAllTaxiwaysChange?.(v ? (Number(v) as ConditionCode) : undefined)}
           />
         </div>
-        <FadeIn shown={allTaxiways && !!allTaxiwaysCondition}>
-          <Code text={"ALL TWYS " + allTaxiwaysCondition + "."} />
+        <FadeIn shown={allTaxiways && allTaxiwaysValue !== undefined}>
+          <Code text={"ALL TWYS " + allTaxiwaysValue + "."} />
         </FadeIn>
       </CardHeader>
       <FadeIn shown={!allTaxiways}>
-        <ListSelector
+        <ListSelector<TaxiwayCondition | null>
           maxItems={10}
-          value={value}
-          onChange={onChange}
+          value={value as (TaxiwayCondition | null)[]}
+          onChange={(items) => onChange?.(items.filter((i): i is TaxiwayCondition => i !== null))}
           itemType="Taxiway"
           getItemTitle={(index) => `Taxiway ${index + 1}`}
-          renderItem={(_, onItemChange) => (
-            <ConditionSelector item="TWY" onChange={onItemChange} />
+          renderItem={(index, onItemChange) => (
+            <TaxiwayConditionSelector
+              value={value[index] ?? undefined}
+              onChange={onItemChange}
+            />
           )}
         />
       </FadeIn>
     </Card>
-  )
+  );
 }
 
-export function ApronConditionsSelector({value = [], onChange}: {value: string[], onChange?: (value: string[]) => void}) {
-  const [allAprons, setAllAprons] = useState<boolean>(false)
-  const [allApronsCondition, setAllApronsCondition] = useState<ConditionCode | null>(null)
+// ---------------------------------------------------------------------------
+// Apron Conditions
+// ---------------------------------------------------------------------------
+
+type ApronConditionsSelectorProps = {
+  value: ApronCondition[];
+  onChange?: (value: ApronCondition[]) => void;
+  allApronsValue?: ConditionCode;
+  onAllApronsChange?: (value: ConditionCode | undefined) => void;
+}
+
+export function ApronConditionsSelector({
+                                          value = [],
+                                          onChange,
+                                          allApronsValue,
+                                          onAllApronsChange,
+                                        }: ApronConditionsSelectorProps) {
+  const [allAprons, setAllAprons] = useState<boolean>(!!allApronsValue);
+
+  const handleAllApronsToggle = () => {
+    const next = !allAprons;
+    setAllAprons(next);
+    if (!next) onAllApronsChange?.(undefined);
+  };
 
   return (
     <Card className={clsx("mt-2", allAprons && "!pb-0")}>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <SwitchField checked={allAprons} onClick={() => setAllAprons(!allAprons)} label="ALL APRONS" />
-
+          <SwitchField checked={allAprons} onClick={handleAllApronsToggle} label="ALL APRONS" />
           <CCSelector
-            value={allApronsCondition?.toString() ?? ""}
+            value={allApronsValue?.toString() ?? ""}
             disabled={!allAprons}
-            onValueChange={(value) => setAllApronsCondition(value?.toString() as unknown as ConditionCode)}
+            onValueChange={(v) => onAllApronsChange?.(v ? (Number(v) as ConditionCode) : undefined)}
           />
         </div>
-        <FadeIn shown={allAprons && !!allApronsCondition}>
-          <Code text={"ALL APRONS " + allApronsCondition + "."} />
+        <FadeIn shown={allAprons && allApronsValue !== undefined}>
+          <Code text={"ALL APRONS " + allApronsValue + "."} />
         </FadeIn>
       </CardHeader>
       <CardContent>
         <FadeIn shown={!allAprons}>
-          <ListSelector
-            value={value}
-            onChange={onChange}
+          <ListSelector<ApronCondition | null>
+            value={value as (ApronCondition | null)[]}
+            onChange={(items) => onChange?.(items.filter((i): i is ApronCondition => i !== null))}
             itemType="Apron"
             getItemTitle={(index) => `Apron ${index + 1}`}
-            renderItem={(_, onItemChange) => (
-              <ConditionSelector item="APRON" onChange={onItemChange} />
+            renderItem={(index, onItemChange) => (
+              <ApronConditionSelector
+                value={value[index] ?? undefined}
+                onChange={onItemChange}
+              />
             )}
           />
         </FadeIn>
       </CardContent>
     </Card>
-  )
+  );
 }
 
-type ConditionSelectorProps = {
-  item: "TWY" | "APRON",
-  onChange: (value: string | null) => void;
+// ---------------------------------------------------------------------------
+// Single TaxiwayCondition – fully controlled
+// ---------------------------------------------------------------------------
+
+type TaxiwayConditionSelectorProps = {
+  value?: TaxiwayCondition;
+  onChange: (value: TaxiwayCondition | null) => void;
 }
 
-function ConditionSelector({item, onChange}: ConditionSelectorProps) {
-  const [location, setLocation] = useState<string>("");
-  const [condition, setCondition] = useState<ConditionCode | null>(null);
-
-  const prevTextRef = useRef<string | undefined>(undefined);
+function TaxiwayConditionSelector({ value, onChange }: TaxiwayConditionSelectorProps) {
+  const taxiway = value?.taxiway ?? "";
+  const condition = value?.condition;
 
   const text = useMemo(() => {
-    if(!location || location.trim() === "" || !condition) return undefined;
+    if (!taxiway.trim() || condition === undefined) return undefined;
+    return `TWY ${taxiway} ${condition}.`;
+  }, [taxiway, condition]);
 
-    if(item === "TWY") return item + " " + location + " " + condition + ".";
-    if(item === "APRON") return item + " " + location + " " + condition + ".";
-    return undefined;
-  }, [location, condition, item]);
-
-  useEffect(() => {
-    if(!onChange) return;
-    if(prevTextRef.current === text) return;
-    prevTextRef.current = text;
-    onChange(text || null);
-  }, [onChange, text]);
+  const handleChange = (patch: Partial<TaxiwayCondition>) => {
+    const next = { taxiway, condition: condition ?? 6, ...patch };
+    const valid = next.taxiway.trim() !== "" && next.condition !== undefined;
+    onChange(valid ? next as TaxiwayCondition : null);
+  };
 
   return (
-    <div className="flex items-center mb-2 gap-2">
-      <span>{item}</span>
-      {item === "TWY" ? (
-        <TaxiwayField value={location} onChange={setLocation} />
-      ) : (
-        <Input className="max-w-1/4" value={location} onChange={(e) => setLocation(e.currentTarget.value)} />
-      )}
-
-      <CCSelector
-        value={condition?.toString() ?? ""}
-        onValueChange={(value) => setCondition(value?.toString() as unknown as ConditionCode)}
-      />
+    <div className="flex flex-col gap-1 mb-2">
+      <div className="flex items-center gap-2">
+        <span>TWY</span>
+        <TaxiwayField
+          value={taxiway}
+          onChange={(v) => handleChange({ taxiway: v })}
+        />
+        <CCSelector
+          value={condition?.toString() ?? ""}
+          onValueChange={(v) => v && handleChange({ condition: Number(v) as ConditionCode })}
+        />
+      </div>
+      {text && <Code text={text} />}
     </div>
-  )
+  );
 }
 
-function CCSelector({value, onValueChange, disabled = false}: {value: string, onValueChange?: (value: string | null) => void, disabled?: boolean}) {
+// ---------------------------------------------------------------------------
+// Single ApronCondition – fully controlled
+// ---------------------------------------------------------------------------
+
+type ApronConditionSelectorProps = {
+  value?: ApronCondition;
+  onChange: (value: ApronCondition | null) => void;
+}
+
+function ApronConditionSelector({ value, onChange }: ApronConditionSelectorProps) {
+  const apron = value?.apron ?? "";
+  const condition = value?.condition;
+
+  const text = useMemo(() => {
+    if (!apron.trim() || condition === undefined) return undefined;
+    return `APRON ${apron} ${condition}.`;
+  }, [apron, condition]);
+
+  const handleChange = (patch: Partial<ApronCondition>) => {
+    const next = { apron, condition: condition ?? 6, ...patch };
+    const valid = next.apron.trim() !== "" && next.condition !== undefined;
+    onChange(valid ? next as ApronCondition : null);
+  };
+
+  return (
+    <div className="flex flex-col gap-1 mb-2">
+      <div className="flex items-center gap-2">
+        <span>APRON</span>
+        <Input
+          className="max-w-1/4"
+          value={apron}
+          onChange={(e) => handleChange({ apron: e.currentTarget.value })}
+        />
+        <CCSelector
+          value={condition?.toString() ?? ""}
+          onValueChange={(v) => v && handleChange({ condition: Number(v) as ConditionCode })}
+        />
+      </div>
+      {text && <Code text={text} />}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Shared CCSelector
+// ---------------------------------------------------------------------------
+
+function CCSelector({
+                      value,
+                      onValueChange,
+                      disabled = false,
+                    }: {
+  value: string;
+  onValueChange?: (value: string | null) => void;
+  disabled?: boolean;
+}) {
   return (
     <Combobox value={value} onValueChange={onValueChange}>
-      <ComboboxInput disabled={disabled} placeholder="CONDITION"></ComboboxInput>
-
+      <ComboboxInput disabled={disabled} placeholder="CONDITION" />
       <ComboboxContent>
         <ComboboxList>
           {Object.entries(CONDITION_CODES).map(([key, label]) => (
-            <ComboboxItem key={key} value={label}>
-              {label}
+            <ComboboxItem key={key} value={key}>
+              {key} – {label}
             </ComboboxItem>
           ))}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
-  )
+  );
 }

@@ -11,7 +11,7 @@ import {useState} from "react";
 import {CheckIcon, CopyIcon, RefreshCw} from "lucide-react";
 import { AIRPORTS } from "@/lib/data";
 import {clsx} from 'clsx';
-import {useConditionCode} from '@/context/ConditionCodeProvider';
+import {useData} from '@/context/DataProvider';
 import {AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger} from '@/components/ui/alert-dialog';
 import RunwayForm from '@/components/forms/RunwayForm';
 import {Badge} from '@/components/ui/badge';
@@ -22,14 +22,14 @@ import {SeparatorWithLabel} from '@/components/ui/separator';
 import SituationalAwarenessSection from '@/components/SituationalAwarenessSection';
 
 export default function Page() {
-  const [rotation, _] = useState(0);
+  const [rotation] = useState(0);
   const [copied, setCopied] = useState<boolean>(false);
 
-  const { setAirport, activeAirport, activeRunways, changeRunways} = useConditionCode();
+  const { setAirport, activeAirport, activeRunways, changeRunways, parsedOutput } = useData();
 
-  const copyToClipboard = () => {
+  const copyToClipboard = (text: string) => {
     setCopied(true);
-    navigator.clipboard.writeText("XX");
+    navigator.clipboard.writeText(text);
     setTimeout(() => {
       setCopied(false);
     }, 2000);
@@ -44,10 +44,10 @@ export default function Page() {
         <div className="w-1/2">
           <span className="block mb-1 text-foreground font-bold">SNOWTAM</span>
           <div className="flex justify-between rounded-md bg-gray-200 w-full p-2">
-            <code className="block">XX</code>
+            <code className="block">{parsedOutput.snowtam}</code>
             <div className="relative flex items-center gap-2">
               <CopyIcon
-                onClick={copyToClipboard}
+                onClick={() => copyToClipboard(parsedOutput.snowtam)}
                 className={clsx(
                   "cursor-pointer transition-all duration-200",
                   copied
@@ -70,10 +70,10 @@ export default function Page() {
         <div className="w-1/2">
           <span className="block mb-1 text-foreground font-bold">ATIS-REMARK</span>
           <div className="flex justify-between rounded-md bg-gray-200 w-full p-2">
-            <code className="block">XX</code>
+            <code className="block">{parsedOutput.atis}</code>
             <div className="relative flex items-center gap-2">
               <CopyIcon
-                onClick={copyToClipboard}
+                onClick={() => copyToClipboard(parsedOutput.atis)}
                 className={clsx(
                   "cursor-pointer transition-all duration-200",
                   copied
@@ -172,7 +172,7 @@ export default function Page() {
 
         <section>
           <SeparatorWithLabel title="Situational awareness section" />
-          <SituationalAwarenessSection activeRunways={activeRunways} />
+          <SituationalAwarenessSection />
         </section>
       </>)}
     </main>

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState, useRef} from 'react';
 import {Separator} from '@/components/ui/separator';
-import {SnowbankAlongPosition, SnowbankCrossPosition, TaxiwaySnowbankPosition} from '@/lib/types';
+import {SnowbankCrossPosition, TaxiwaySnowbankPosition, RunwaySnowbank, TaxiwaySnowbank} from '@/lib/types';
 import InputHeadline from '@/components/ui/InputHeadline';
 import {Switch} from '@/components/ui/switch';
 import {Input} from '@/components/ui/input';
@@ -12,7 +12,7 @@ import ListSelector from '@/components/forms/ListSelector';
 import TaxiwayField from '@/components/ui/TaxiwayField';
 import {Card} from '@/components/ui/card';
 
-export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { runways: string[], value?: string[], onChange?: (value: string[]) => void }) {
+export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { runways: string[], value?: TaxiwaySnowbank[], onChange?: (value: TaxiwaySnowbank[]) => void }) {
   return (
     <Card>
       <ListSelector
@@ -21,9 +21,10 @@ export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { r
         maxItems={10}
         itemType="snowbank"
         getItemTitle={(index) => `Snowbank ${index + 1}`}
-        renderItem={(_, onItemChange) => (
+        renderItem={(index, onItemChange) => (
           <TaxiwaySnowBankSelector
             runways={runways}
+            value={value[index]}
             onChange={onItemChange}
           />
         )}
@@ -32,7 +33,7 @@ export function SnowbankOnTaxiwaySelector({ runways, value = [], onChange }: { r
   );
 }
 
-export function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: string[], onChange?: (value: string[]) => void}) {
+export function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway: string, value?: RunwaySnowbank[], onChange?: (value: RunwaySnowbank[]) => void}) {
   return (
     <Card>
       <ListSelector
@@ -41,9 +42,10 @@ export function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway
         onChange={onChange}
         itemType="snowbank"
         getItemTitle={(index) => `Snowbank ${index + 1}`}
-        renderItem={(_, onItemChange) => (
+        renderItem={(index, onItemChange) => (
           <RunwaySnowBankSelector
             runway={runway}
+            value={value[index]}
             onChange={onItemChange}
           />
         )}
@@ -52,7 +54,7 @@ export function SnowBankOnRunwaySelector({runway, value = [], onChange}: {runway
   );
 }
 
-function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange?: (value: string | null) => void }) {
+function RunwaySnowBankSelector({ runway, value, onChange }: { runway: string, value?: RunwaySnowbank, onChange?: (value: RunwaySnowbank | null) => void }) {
   const TRANSITIONS: Record<"L" | "R", Record<SnowbankCrossPosition, SnowbankCrossPosition>> = {
     L: {
       NONE: "L",
@@ -68,37 +70,36 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
     },
   };
 
-  const [crossPosition, setCrossPosition] = useState<SnowbankCrossPosition>("NONE");
-  const [alongPosition, setAlongPosition] = useState<SnowbankAlongPosition>(undefined);
-  const [taxiways, setTaxiways] = useState<[string, string]>(["", ""]);
-  const [leftMarginFromCL, setLeftMarginFromCL] = useState<number>(0);
-  const [rightMarginFromCL, setRightMarginFromCL] = useState<number>(0);
+  const [snowbank, setSnowbank] = useState<RunwaySnowbank>(value || {
+    crossPosition: "NONE",
+    leftMarginFromCL: 0,
+    rightMarginFromCL: 0,
+    alongPosition: undefined,
+    taxiways: ["", ""]
+  });
+
   const prevTextRef = useRef<string | undefined>(undefined);
 
   const snowBankText = useMemo(() => {
     try {
-      return parseSnowBankOnRunway(
-        runway,
-        crossPosition,
-        crossPosition === "L" || crossPosition === "LR" ? leftMarginFromCL : undefined,
-        crossPosition === "R" || crossPosition === "LR" ? rightMarginFromCL : undefined,
-        alongPosition,
-        alongPosition === "BTN TWY" ? taxiways : undefined
-      );
+      return parseSnowBankOnRunway(snowbank, runway);
     } catch {
       return undefined;
     }
-  }, [runway, crossPosition, leftMarginFromCL, rightMarginFromCL, alongPosition, taxiways]);
+  }, [snowbank, runway]);
 
   useEffect(() => {
     if (!onChange) return;
     if (prevTextRef.current === snowBankText) return;
     prevTextRef.current = snowBankText;
-    onChange(snowBankText || null);
-  }, [onChange, snowBankText]);
+    onChange(snowBankText ? snowbank : null);
+  }, [onChange, snowBankText, snowbank]);
 
   const toggleCrossPosition = (side: "L" | "R") => {
-    setCrossPosition(prev => TRANSITIONS[side][prev]);
+    setSnowbank(prev => ({
+      ...prev,
+      crossPosition: TRANSITIONS[side][prev.crossPosition]
+    }));
   };
 
   return (
@@ -107,11 +108,11 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
         <InputHeadline title="Margin from centerline*" tooltip="" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=15L%20CHEMICALLY%20TREATED%22-,Item%20M,-.%20Snow%20banks%20on" />
         <div className="flex w-full flex-wrap">
           <div className="w-1/2 flex items-center gap-1">
-            <Switch checked={(crossPosition === "L" || crossPosition === "LR")} onClick={() => toggleCrossPosition("L")} />
+            <Switch checked={(snowbank.crossPosition === "L" || snowbank.crossPosition === "LR")} onClick={() => toggleCrossPosition("L")} />
             <span>Left from centerline</span>
           </div>
           <div className="w-1/2 flex items-center gap-1">
-            <Switch checked={(crossPosition === "R" || crossPosition === "LR")} onClick={() => toggleCrossPosition("R")} />
+            <Switch checked={(snowbank.crossPosition === "R" || snowbank.crossPosition === "LR")} onClick={() => toggleCrossPosition("R")} />
             <span>Right from centerline</span>
           </div>
           <div className="w-full mt-1 flex items-center gap-1">
@@ -120,8 +121,11 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
               <Input
                 placeholder="Margin in meters"
                 type="number"
-                value={leftMarginFromCL ?? 0}
-                onChange={(e) => setLeftMarginFromCL(e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value))}
+                value={snowbank.leftMarginFromCL ?? 0}
+                onChange={(e) => setSnowbank(prev => ({
+                  ...prev,
+                  leftMarginFromCL: e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value)
+                }))}
               />
             </div>
             <div className="w-1/2">
@@ -129,8 +133,11 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
               <Input
                 placeholder="Margin in meters"
                 type="number"
-                value={rightMarginFromCL ?? 0}
-                onChange={(e) => setRightMarginFromCL(e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value))}
+                value={snowbank.rightMarginFromCL ?? 0}
+                onChange={(e) => setSnowbank(prev => ({
+                  ...prev,
+                  rightMarginFromCL: e.currentTarget.value === "" ? 0 : Number(e.currentTarget.value)
+                }))}
               />
             </div>
           </div>
@@ -141,45 +148,54 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
         <InputHeadline title="Position along the runway" tooltip="" linkToIcao="https://skybrary.aero/articles/snowtam#:~:text=15L%20CHEMICALLY%20TREATED%22-,Item%20M,-.%20Snow%20banks%20on" />
         <div className="w-full flex">
           <div className="w-1/2 flex items-center gap-1">
-            <Switch checked={alongPosition === "THR"} onClick={() => {
-              if(alongPosition === "THR") {
-                setAlongPosition(undefined);
-              } else setAlongPosition("THR");
+            <Switch checked={snowbank.alongPosition === "THR"} onClick={() => {
+              setSnowbank(prev => ({
+                ...prev,
+                alongPosition: prev.alongPosition === "THR" ? undefined : "THR"
+              }));
             }} />
             <span>From THR</span>
           </div>
           <div className="w-1/2 flex items-center gap-1">
-            <Switch checked={alongPosition === "MID"} onClick={() => {
-              if(alongPosition === "MID") {
-                setAlongPosition(undefined);
-              } else setAlongPosition("MID");
+            <Switch checked={snowbank.alongPosition === "MID"} onClick={() => {
+              setSnowbank(prev => ({
+                ...prev,
+                alongPosition: prev.alongPosition === "MID" ? undefined : "MID"
+              }));
             }} />
             <span>From MID</span>
           </div>
         </div>
         <div className="w-full flex items-center gap-1 mt-1">
-          <Switch checked={alongPosition === "BTN TWY"} onClick={() => {
-            if(alongPosition === "BTN TWY") {
-              setAlongPosition(undefined);
-            } else setAlongPosition("BTN TWY");
+          <Switch checked={snowbank.alongPosition === "BTN TWY"} onClick={() => {
+            setSnowbank(prev => ({
+              ...prev,
+              alongPosition: prev.alongPosition === "BTN TWY" ? undefined : "BTN TWY"
+            }));
           }} />
           <span>Between taxiways</span>
           <Input
             className="max-w-[10%]"
             placeholder="A"
-            value={taxiways[0]}
+            value={snowbank.taxiways?.[0] || ""}
             onChange={(e) =>
-              setTaxiways(prev => [e.target.value, prev[1]])
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [e.target.value, prev.taxiways?.[1] || ""]
+              }))
             }
           />
           <span>and</span>
           <Input
             className="max-w-[10%]"
             placeholder="B"
-            value={taxiways[1]}
+            value={snowbank.taxiways?.[1] || ""}
             type="text"
             onChange={(e) =>
-              setTaxiways(prev => [prev[0], e.target.value])
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [prev.taxiways?.[0] || "", e.target.value]
+              }))
             }
           />
         </div>
@@ -195,100 +211,113 @@ function RunwaySnowBankSelector({ runway, onChange }: { runway: string, onChange
   )
 }
 
-function TaxiwaySnowBankSelector({ runways, onChange }: { runways: string[], onChange?: (value: string | null) => void }) {
-  const [taxiway, setTaxiway] = useState<string>("");
-  const [position, setTWYPosition] = useState<TaxiwaySnowbankPosition>(undefined);
-  const [taxiways, setTaxiways] = useState<[string, string | undefined]>(["", undefined]);
-  const [selectedRunway, setSelectedRunway] = useState<string>("");
+function TaxiwaySnowBankSelector({ runways, value, onChange }: { runways: string[], value?: TaxiwaySnowbank, onChange?: (value: TaxiwaySnowbank | null) => void }) {
+  const [snowbank, setSnowbank] = useState<TaxiwaySnowbank>(value || {
+    taxiway: "",
+    position: undefined,
+    taxiways: ["", undefined],
+    runway: ""
+  });
+
   const prevTextRef = useRef<string | undefined>(undefined);
 
-  const setPosition = (value: TaxiwaySnowbankPosition) => {
-    setTaxiways(["", undefined]);
-    setTWYPosition(value);
+  const setPosition = (newPosition: TaxiwaySnowbankPosition) => {
+    setSnowbank(prev => ({
+      ...prev,
+      position: newPosition,
+      taxiways: ["", undefined]
+    }));
   }
 
   const snowBankText = useMemo(() => {
-    if (!taxiway || taxiway.trim() === "") return undefined;
+    if (!snowbank.taxiway || snowbank.taxiway.trim() === "") return undefined;
     try {
-      return parseSnowBankOnTaxiway(
-        taxiway,
-        position,
-        taxiways,
-        selectedRunway
-      );
+      return parseSnowBankOnTaxiway(snowbank);
     } catch {
       return undefined;
     }
-  }, [taxiway, position, taxiways, selectedRunway]);
+  }, [snowbank]);
 
   useEffect(() => {
     if (!onChange) return;
     if (prevTextRef.current === snowBankText) return;
     prevTextRef.current = snowBankText;
-    onChange(snowBankText || null);
-  }, [onChange, snowBankText]);
+    onChange(snowBankText ? snowbank : null);
+  }, [onChange, snowBankText, snowbank]);
 
   return (
     <div>
       <div className="flex items-center gap-2">
         <span>Snowbank on TWY </span>
-        <TaxiwayField value={taxiway} onChange={(value) => setTaxiway(value)} />
+        <TaxiwayField value={snowbank.taxiway} onChange={(value) => setSnowbank(prev => ({ ...prev, taxiway: value }))} />
       </div>
       <div>
         <div className="flex items-center gap-2 mt-2">
-          <SwitchField checked={position === "BTN TWY"} onClick={() => {
-            setPosition(position === "BTN TWY" ? undefined : "BTN TWY");
+          <SwitchField checked={snowbank.position === "BTN TWY"} onClick={() => {
+            setPosition(snowbank.position === "BTN TWY" ? undefined : "BTN TWY");
           }} label="BTN TWY" />
           <TaxiwayField
-            disabled={position !== "BTN TWY"}
-            value={position === "BTN TWY" ? taxiways[0] : ""}
+            disabled={snowbank.position !== "BTN TWY"}
+            value={snowbank.position === "BTN TWY" ? snowbank.taxiways?.[0] || "" : ""}
             onChange={(value) => {
-              setTaxiways([value, taxiways[1]]);
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [value, prev.taxiways?.[1]]
+              }));
             }}
           />
           <span>and</span>
           <TaxiwayField
-            disabled={position !== "BTN TWY"}
-            value={position === "BTN TWY" ? taxiways[1] ?? "" : ""}
+            disabled={snowbank.position !== "BTN TWY"}
+            value={snowbank.position === "BTN TWY" ? snowbank.taxiways?.[1] ?? "" : ""}
             onChange={(value) => {
-              setTaxiways([taxiways[0], value]);
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [prev.taxiways?.[0] || "", value]
+              }));
             }}
           />
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <SwitchField checked={position === "FM TWY"} onClick={() => {
-            setPosition(position === "FM TWY" ? undefined : "FM TWY");
+          <SwitchField checked={snowbank.position === "FM TWY"} onClick={() => {
+            setPosition(snowbank.position === "FM TWY" ? undefined : "FM TWY");
           }} label="FM TWY" />
           <TaxiwayField
-            disabled={position !== "FM TWY"}
-            value={position === "FM TWY" ? taxiways[0] : ""}
+            disabled={snowbank.position !== "FM TWY"}
+            value={snowbank.position === "FM TWY" ? snowbank.taxiways?.[0] || "" : ""}
             onChange={(value) => {
-              setTaxiways([value, undefined]);
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [value, undefined]
+              }));
             }}
           />
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <SwitchField checked={position === "BTN TWY AND RWY"} onClick={() => {
-            setPosition(position === "BTN TWY AND RWY" ? undefined : "BTN TWY AND RWY");
+          <SwitchField checked={snowbank.position === "BTN TWY AND RWY"} onClick={() => {
+            setPosition(snowbank.position === "BTN TWY AND RWY" ? undefined : "BTN TWY AND RWY");
           }} label="BTN TWY" />
           <TaxiwayField
-            disabled={position !== "BTN TWY AND RWY"}
-            value={position === "BTN TWY AND RWY" ? taxiways[0] : ""}
+            disabled={snowbank.position !== "BTN TWY AND RWY"}
+            value={snowbank.position === "BTN TWY AND RWY" ? snowbank.taxiways?.[0] || "" : ""}
             onChange={(value) => {
-              setTaxiways([value, undefined]);
+              setSnowbank(prev => ({
+                ...prev,
+                taxiways: [value, undefined]
+              }));
             }}
           />
           <span>AND RWY</span>
           <Combobox
-            disabled={position !== "BTN TWY AND RWY"}
+            disabled={snowbank.position !== "BTN TWY AND RWY"}
             items={runways}
-            value={selectedRunway}
+            value={snowbank.runway || ""}
             onValueChange={(value) => {
               if(!value) return;
-              setSelectedRunway(value);
+              setSnowbank(prev => ({ ...prev, runway: value }));
             }}
           >
-            <ComboboxInput disabled={position !== "BTN TWY AND RWY"} className="w-17" placeholder={runways.length === 1 ? runways[0] : "Select runway"} />
+            <ComboboxInput disabled={snowbank.position !== "BTN TWY AND RWY"} className="w-17" placeholder={runways.length === 1 ? runways[0] : "Select runway"} />
             <ComboboxContent>
               <ComboboxList>
                 {(item) => (

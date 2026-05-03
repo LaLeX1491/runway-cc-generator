@@ -20,7 +20,7 @@ export default function RunwayForm({rwy}: { rwy: string }) {
           {(["TDZ", "MID", "END"] as RunwayZone[]).map(section => (
             <div key={section} className={`w-1/3 ${section !== "END" ? "border-r border-black" : ""}`}>
               <h1 className="text-center font-extrabold text-2xl">{section}</h1>
-              <AirplanePerformanceSection />
+              <AirplanePerformanceSection runwayZone={section} runway={rwy} />
             </div>
           ))}
         </div>
@@ -30,7 +30,7 @@ export default function RunwayForm({rwy}: { rwy: string }) {
         <div className="flex justify-center pb-1">
           <div>
             <h1 className="text-center font-extrabold text-2xl">RWY {rwy}</h1>
-            <AirplanePerformanceSection equalContamination={true} />
+            <AirplanePerformanceSection runway={rwy} runwayZone="ALL" />
           </div>
         </div>
       )}

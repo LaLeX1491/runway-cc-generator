@@ -1,93 +1,74 @@
-import React, {useState} from 'react';
-import {CardContent} from '@/components/ui/card';
-import {SeparatorWithLabel} from '@/components/ui/separator';
-import {Button} from '@/components/ui/button';
-import {CirclePlus, Trash} from 'lucide-react';
-import Code from '@/components/ui/code';
+import React, { useState } from 'react';
+import { CardContent } from '@/components/ui/card';
+import { SeparatorWithLabel } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { CirclePlus, Trash } from 'lucide-react';
 
-type SnowbankListProps = {
-  value?: string[];
-  onChange?: (value: string[]) => void;
-  renderItem: (index: number, onChange: (value: string | null) => void) => React.ReactNode;
+type ListSelectorProps<T> = {
+  value: T[];
+  onChange?: (value: T[]) => void;
+  renderItem: (index: number, onChange: (value: T | null) => void) => React.ReactNode;
   getItemTitle: (index: number) => string;
   itemType: string;
   maxItems?: number;
 }
 
-export default function ListSelector({ value = [], onChange, renderItem, getItemTitle, itemType, maxItems = 5 }: SnowbankListProps) {
-  const [items, setItems] = useState<(string | null)[]>(
-    value.length > 0 ? value : [null]
-  );
+export default function ListSelector<T>({value, onChange, renderItem, getItemTitle, itemType, maxItems = 5}: ListSelectorProps<T>) {
+  const [slotCount, setSlotCount] = useState(Math.max(1, value.length));
 
-  const updateSnowBank = (index: number, newValue: string | null) => {
-    setItems(prev => {
-      const copy = [...prev];
-      copy[index] = newValue;
+  const updateItem = (index: number, newValue: T | null) => {
+    if (!onChange) return;
+    const merged = Array.from({ length: slotCount }, (_, i) =>
+      i === index ? newValue : (value[i] ?? null)
+    );
+    onChange(merged.filter((s): s is T => s !== null));
+  };
 
+  const addItem = () => {
+    if (slotCount >= maxItems) return;
+    setSlotCount(prev => prev + 1);
+  };
+
+  const deleteLastItem = () => {
+    if (slotCount <= 1) return;
+    setSlotCount(prev => {
+      const next = prev - 1;
       if (onChange) {
-        const filtered = copy.filter(s => s !== null && s !== "") as string[];
-        onChange(filtered);
+        onChange(value.slice(0, next));
       }
-
-      return copy;
+      return next;
     });
   };
 
-  const addSnowBank = () => {
-    if (items.length >= maxItems) return;
-    setItems(prev => [...prev, null]);
-  };
-
-  const deleteLastSnowBank = () => {
-    setItems(prev => {
-      const newBanks = prev.slice(0, -1);
-
-      if (onChange) {
-        const filtered = newBanks.filter(s => s !== null) as string[];
-        onChange(filtered);
-      }
-
-      return newBanks;
-    });
-  };
+  const lastSlotEmpty = value.length < slotCount;
 
   return (
     <CardContent className="flex flex-col gap-2">
-      {items.map((_, index) => (
+      {Array.from({ length: slotCount }, (_, index) => (
         <div key={index}>
           <SeparatorWithLabel className="mt-0" title={getItemTitle(index)} />
-          {renderItem(index, (value) => updateSnowBank(index, value))}
+          {renderItem(index, (val) => updateItem(index, val))}
         </div>
       ))}
-      {items.length > 1 && (
+      {slotCount > 1 && (
         <Button
           variant="outline"
           className="w-full flex items-center gap-2"
-          onClick={deleteLastSnowBank}
+          onClick={deleteLastItem}
         >
           <Trash />
-          Delete current {itemType}
+          Delete last {itemType}
         </Button>
       )}
       <Button
         variant="outline"
         className="w-full flex items-center gap-2"
-        onClick={addSnowBank}
-        disabled={
-        items.length >= maxItems ||
-          items[items.length - 1] === null
-      }
+        onClick={addItem}
+        disabled={slotCount >= maxItems || lastSlotEmpty}
       >
         <CirclePlus />
-        Add {itemType} ({items.length}/{maxItems})
+        Add {itemType} ({slotCount}/{maxItems})
       </Button>
-      {items.length > 0 && items[0] !== null && (
-        <Code
-          text={items
-            .map(s => (s != null ? s + "\n" : ""))
-            .join("")}
-        />
-      )}
     </CardContent>
   );
 }

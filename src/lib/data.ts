@@ -1,4 +1,4 @@
-import {Airport, ConditionCode, ContaminationType} from '@/lib/types';
+import {Airport, ConditionCode, ContaminationType} from './types';
 
 export function getConditionCodeOptions(code: ConditionCode): ContaminationType[] {
   return CONDITION_DESCRIPTIONS[code];

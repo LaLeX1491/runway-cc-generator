@@ -1,7 +1,7 @@
 import "./index.css";
 import ClientThemeProvider from '@/providers/ClientThemeProvider';
 import React from 'react';
-import {ConditionCodeProvider} from '@/context/ConditionCodeProvider';
+import {DataProvider} from '@/context/DataProvider';
 
 export default function RootLayout({
   children,
@@ -16,9 +16,9 @@ export default function RootLayout({
             <h1 className="text-5xl text-primary font-bold">FIR Bremen</h1>
             <span className="text-muted-foreground">runway condition code generator</span>
           </header>
-          <ConditionCodeProvider>
+          <DataProvider>
             {children}
-          </ConditionCodeProvider>
+          </DataProvider>
         </ClientThemeProvider>
       </body>
     </html>
