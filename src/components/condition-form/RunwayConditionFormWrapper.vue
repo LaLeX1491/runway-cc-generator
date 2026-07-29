@@ -28,10 +28,10 @@ const { selectedRunways } = storeToRefs(store);
     <CardHeader class="flex justify-between items-center">
       <CardTitle>
         Runway Condition
-        <Badge v-if="mode == 'ez'" class="bg-green-600">easy mode</Badge>
+        <Badge v-if="mode == 'ez'" class="bg-green-600 text-white">easy mode</Badge>
         <Tooltip v-else>
           <TooltipTrigger>
-            <Badge  class="bg-red-600">advanced mode</Badge>
+            <Badge class="bg-red-600 text-white">advanced mode</Badge>
           </TooltipTrigger>
           <TooltipContent>Advanced mode should only be used if your input data is correct and realistic.</TooltipContent>
         </Tooltip>
