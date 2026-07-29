@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {Card, CardContent} from '@/components/ui/card';
 import {toast} from 'vue-sonner';
+import {Tooltip, TooltipTrigger, TooltipContent} from '@/components/ui/tooltip';
 
 const props = defineProps<{
   code: string;
@@ -18,12 +19,16 @@ function copyToClipboard() {
 <template>
   <Card :class="code ? 'cursor-pointer' : ''" @click="copyToClipboard">
     <CardContent>
-      <p
-          v-if="code"
-          class="font-mono text-xl font-bold"
-      >
-        {{ code }}
-      </p>
+      <Tooltip v-if="code">
+        <TooltipTrigger>
+          <p
+              class="font-mono text-xl font-bold"
+          >
+            {{ code }}
+          </p>
+        </TooltipTrigger>
+        <TooltipContent>Click to copy to clipboard</TooltipContent>
+      </Tooltip>
 
       <p
           v-else
