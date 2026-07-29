@@ -1,0 +1,22 @@
+{
+  "EDDB": {
+    "icao": "EDDB",
+    "label": "EDDB - Berlin",
+    "runways": ["24L", "24R"]
+  },
+  "EDDH": {
+    "icao": "EDDH",
+    "label": "EDDH - Hamburg",
+    "runways": ["23", "33"]
+  },
+  "EDDV": {
+    "icao": "EDDV",
+    "label": "EDDV - Hannover",
+    "runways": ["27L", "27R"]
+  },
+  "EDDW": {
+    "icao": "EDDW",
+    "label": "EDDW - Bremen",
+    "runways": ["27"]
+  }
+}

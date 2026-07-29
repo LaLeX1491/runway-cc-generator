@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import GeneratorView from "@/views/GeneratorView.vue";
+import {TooltipProvider} from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 </script>
 
-<style src="style.css"></style>
-
 <template>
-  <HelloWorld />
+  <TooltipProvider>
+      <Toaster />
+      <GeneratorView />
+  </TooltipProvider>
 </template>
