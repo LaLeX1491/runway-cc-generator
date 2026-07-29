@@ -66,6 +66,10 @@ const { selectedRunways } = storeToRefs(store);
                 <AccordionTrigger>How to decide the runway condition in the easy mode?</AccordionTrigger>
                 <AccordionContent>Use the latest METARs to determine the precipitation. You can also check the real-world D-ATIS but this data might be outdated. Select the surface condition as follows:<br><br>DRY = RWYCC 6 = No precipitation<br>WET = RWYCC 5 = RA, DZ or BR<br>SNOW = RWYCC 5 = SN, SG<br>Slippery Wet = RWYCC 3 = PL, GR, GS<br><br>For RWYCCs worse than 3, use the advanced mode. In general, moisture on the runway will only lead to RWYCC 5. Worse is possible, but unlikely.</AccordionContent>
               </AccordionItem>
+              <AccordionItem value="vatis">
+                <AccordionTrigger>How to get the RWYCC in my atis?</AccordionTrigger>
+                <AccordionContent>Paste the result in the airport conditions window of vATIS.<img src="/vatis-example.png" class="mt-2 border-2 rounded-md"></AccordionContent>
+              </AccordionItem>
               <AccordionItem value="dmhs">
                 <AccordionTrigger>Stil unsure? Use the decision making helpsheet.</AccordionTrigger>
                 <AccordionContent><img src="/decision-making-helpsheet.png"></AccordionContent>
