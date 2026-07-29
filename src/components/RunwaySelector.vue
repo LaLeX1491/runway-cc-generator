@@ -94,7 +94,7 @@ watch(
         class="grow"
         :class="[
         selectedRunways.includes(runway)
-          ? 'border-primary bg-primary/10 !px-5'
+          ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'
           : '',
         ]"
         @click="toggleRunway(runway)"

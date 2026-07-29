@@ -90,7 +90,7 @@ const { conditions } = storeToRefs(store);
           class="grow"
           :class="conditions[runway]?.conditionCode === value.condition.conditionCode &&
         conditions[runway]?.deposit === value.condition.deposit
-          ? 'border-primary bg-primary/10 !px-5'
+          ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'
           : ''"
           @click="setCondition(runway, value.condition)"
       >
