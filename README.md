@@ -1,5 +1,16 @@
-# Vue 3 + TypeScript + Vite
+# Runway Condition Code Generator
+Small web app to generate runway condition codes for the ATISes (mostly used during autumn and winter time)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Contact
+|       Name       | Responsible for |         Contact         |
+|:----------------:|:---------------:|:-----------------------:|
+| Max S. - 1742910 |        *        | mxlschroeder-dev@gmx.de |
+
+## Prerequisites
+- Node.js (https://nodejs.org/en)
+
+## Running the Application
+1. run ``npm install``
+2. run ``npm run dev``
+3. Have fun generating crazy condition codes 😉
