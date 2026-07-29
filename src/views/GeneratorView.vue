@@ -9,12 +9,20 @@ import { MoonIcon, SunIcon } from "lucide-vue-next";
 import { useRunwayStore } from "@/stores/runway-conditions";
 import {storeToRefs} from 'pinia';
 import {useColorMode} from '@vueuse/core';
+import {ref} from 'vue';
 
 const store = useRunwayStore();
 
 const { conditionString } = storeToRefs(store);
 
 const mode = useColorMode();
+
+const generations = ref(0);
+
+function generate() {
+  store.generateConditionString();
+  generations.value++;
+}
 
 function toggleTheme() {
   mode.value = mode.value === "dark" ? "light" : "dark";
@@ -61,9 +69,10 @@ function toggleTheme() {
 
         <Button
             size="lg"
-            @click="store.generateConditionString()"
+            @click="generate"
         >
-          Generate RCC
+          <span v-if="generations === 0">Generate RCC</span>
+          <span v-else>Regenerate RCC</span>
         </Button>
 
         <Card>
