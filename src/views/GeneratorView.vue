@@ -43,7 +43,7 @@ function toggleTheme() {
           </h1>
 
           <p class="text-muted-foreground">
-            Generate ICAO runway condition reports for <a class="underline text-blue-900" href="https://vatis.app" target="_blank">vATIS</a>.
+            Generate ICAO runway condition reports for <a class="underline text-blue-600" href="https://vatis.app" target="_blank">vATIS</a>.
           </p>
         </div>
         <Button
@@ -83,11 +83,14 @@ function toggleTheme() {
           </CardHeader>
 
           <CardContent>
-            <RccPreview :code="conditionString"/>
+            <RccPreview :code="conditionString ?? ''"/>
           </CardContent>
         </Card>
 
       </div>
     </div>
+    <footer class="text-center mt-4 text-sm text-muted-foreground items-center">
+      <a href="https://vatsim-germany.org/policies/gdpr" class="hover:underline" target="_blank">GDPR</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://vatsim-germany.org/policies/imprint" class="hover:underline" target="_blank">Imprint</a>
+    </footer>
   </main>
 </template>

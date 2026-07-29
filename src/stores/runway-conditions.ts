@@ -1,22 +1,16 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Airport } from "@/types/airport";
-import type { RunwayCondition } from "@/types/conditions";
+import type {RunwayCondition, RunwayConditions} from "@/types/conditions";
 
 import { generate } from "@/lib/generator";
-
-export type RunwayConditions = {
-  tdz: RunwayCondition;
-  mid: RunwayCondition;
-  end: RunwayCondition;
-}
 
 export const useRunwayConditionStore = defineStore("runwayConditions", () => {
   const airport = ref<Airport | null>(null);
   const metar = ref<string | null>(null);
   const runways = ref<string[]>([]);
   const selectedRunways = ref<string[]>([]);
-  const conditions = ref<Record<string, RunwayCondition>>({});
+  const conditions = ref<Record<string, RunwayConditions>>({});
   const conditionString = ref<string | null>(null);
 
   async function setAirport(value: Airport | null) {
@@ -43,9 +37,24 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
 
   function setCondition(
     runway: string,
+    section: keyof RunwayConditions,
     condition: RunwayCondition,
   ) {
-    conditions.value[runway] = condition;
+    if (!conditions.value[runway]) {
+      conditions.value[runway] = {} as RunwayConditions;
+    }
+    conditions.value[runway][section] = condition;
+  }
+
+  function setEasyCondition(
+    runway: string,
+    condition: RunwayCondition,
+  ) {
+    conditions.value[runway] = {
+      tdz: condition,
+      mid: { ...condition },
+      end: { ...condition },
+    };
   }
 
   function generateConditionString() {
@@ -63,6 +72,7 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
     setAirport,
     setRunways,
     setCondition,
+    setEasyCondition,
     generateConditionString,
   };
 });

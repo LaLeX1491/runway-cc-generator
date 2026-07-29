@@ -1,22 +1,24 @@
 <script setup lang="ts">
 
 import {Button} from '@/components/ui/button';
-import type {RunwayCondition} from '@/types/conditions.ts';
+import {Label} from '@/components/ui/label';
+import type {Deposit, RunwayCondition} from '@/types/conditions.ts';
 import {useRunwayConditionStore} from '@/stores/runway-conditions.ts';
 import {storeToRefs} from 'pinia';
 import {Separator} from "@/components/ui/separator"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {reactive, watch} from 'vue';
 
-defineProps<{
+const props = defineProps<{
   runway: string;
   mode: "ez" | "ad";
 }>();
 
 const ezValues: {label: string, value: string, condition: RunwayCondition}[] = [
-  { label: "Dry", value: "dry", condition: { runwaySection: "all", conditionCode: 6, deposit: "dry", percentage: 100 }},
-  { label: "Wet", value: "wet", condition: { runwaySection: "all", conditionCode: 5, deposit: "wet", percentage: 100 }},
-  { label: "Snow", value: "snow", condition: { runwaySection: "all", conditionCode: 5, deposit: "dry_snow", percentage: 100 }},
-  { label: "Slippery Wet", value: "slipwet", condition: { runwaySection: "all", conditionCode: 3, deposit: "slippery_wet", percentage: 100 }}
+  { label: "Dry", value: "dry", condition: { conditionCode: 6, deposit: "dry", percentage: 100 }},
+  { label: "Wet", value: "wet", condition: { conditionCode: 5, deposit: "wet", percentage: 100 }},
+  { label: "Snow", value: "snow", condition: { conditionCode: 5, deposit: "dry_snow", percentage: 100 }},
+  { label: "Slippery Wet", value: "slipwet", condition: { conditionCode: 3, deposit: "slippery_wet", percentage: 100 }}
 ]
 
 type SelectOption = {
@@ -24,7 +26,10 @@ type SelectOption = {
   value: string | number;
 };
 
+type AdFieldKey = "conditionCode" | "deposit" | "percentage";
+
 type AdValue = {
+  key: AdFieldKey;
   label: string;
   selectPlaceholder: string;
   values: SelectOption[];
@@ -32,6 +37,7 @@ type AdValue = {
 
 const adValues: AdValue[] = [
   {
+    key: "conditionCode",
     label: "Runway condition code",
     selectPlaceholder: "Select RWYCC",
     values: [6, 5, 4, 3, 2, 1, 0].map(value => ({
@@ -40,6 +46,7 @@ const adValues: AdValue[] = [
     })),
   },
   {
+    key: "deposit",
     label: "Deposit",
     selectPlaceholder: "Select deposit",
     values: [
@@ -61,6 +68,7 @@ const adValues: AdValue[] = [
     })),
   },
   {
+    key: "percentage",
     label: "Percentage",
     selectPlaceholder: "Select percentage",
     values: [100, 75, 50, 25].map(value => ({
@@ -70,12 +78,53 @@ const adValues: AdValue[] = [
   },
 ];
 
-const runwayZones = ["TDZ", "MID", "END"]
+type RunwayZoneKey = "tdz" | "mid" | "end";
+
+const runwayZones: { key: RunwayZoneKey; label: string }[] = [
+  { key: "tdz", label: "TDZ" },
+  { key: "mid", label: "MID" },
+  { key: "end", label: "END" },
+];
 
 const store = useRunwayConditionStore();
 
-const { setCondition } = useRunwayConditionStore();
+const { setCondition, setEasyCondition } = store;
 const { conditions } = storeToRefs(store);
+
+const adState = reactive<Record<RunwayZoneKey, Partial<Record<AdFieldKey, number | string>>>>({
+  tdz: {},
+  mid: {},
+  end: {},
+});
+
+watch(
+    adState,
+    (state) => {
+      for (const zone of runwayZones) {
+        const draft = state[zone.key];
+        if (
+            draft.conditionCode !== undefined &&
+            draft.deposit !== undefined &&
+            draft.percentage !== undefined
+        ) {
+          setCondition(props.runway, zone.key, {
+            conditionCode: Number(draft.conditionCode),
+            deposit: draft.deposit as Deposit,
+            percentage: Number(draft.percentage),
+          });
+        }
+      }
+    },
+    { deep: true },
+);
+
+function isEzActive(condition: RunwayCondition) {
+  const current = conditions.value[props.runway]?.tdz;
+  return (
+      current?.conditionCode === condition.conditionCode &&
+      current?.deposit === condition.deposit
+  );
+}
 
 </script>
 
@@ -88,11 +137,10 @@ const { conditions } = storeToRefs(store);
           :key="value.label"
           :value="value.label"
           class="grow"
-          :class="conditions[runway]?.conditionCode === value.condition.conditionCode &&
-        conditions[runway]?.deposit === value.condition.deposit
+          :class="isEzActive(value.condition)
           ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'
           : ''"
-          @click="setCondition(runway, value.condition)"
+          @click="setEasyCondition(runway, value.condition)"
       >
         {{value.label}}
       </Button>
@@ -101,13 +149,13 @@ const { conditions } = storeToRefs(store);
   <section v-else>
     <div class="grid grid-cols-3">
       <div
-          v-for="[idx, zone] in runwayZones.entries()"
-          :key="zone"
+          v-for="(zone, idx) in runwayZones"
+          :key="zone.key"
           class="p-2"
           :class="idx !== 2 ? 'border-r' : ''"
       >
         <h1 class="text-center font-black text-xl pb-2">
-          {{ zone }}
+          {{ zone.label }}
         </h1>
         <Separator />
         <div
@@ -116,7 +164,7 @@ const { conditions } = storeToRefs(store);
             class="my-2"
         >
           <Label class="text-sm">{{ field.label }}</Label>
-          <Select>
+          <Select v-model="adState[zone.key][field.key]">
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="field.selectPlaceholder" />
             </SelectTrigger>

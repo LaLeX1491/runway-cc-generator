@@ -58,7 +58,7 @@ const store = useRunwayConditionStore();
 
     <div>
       <Label class="mb-1">
-        METAR
+        METAR and time
       </Label>
 
       <Tooltip class="w-full">
