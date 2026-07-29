@@ -69,8 +69,8 @@ const adValues: AdValue[] = [
   },
   {
     key: "coverage",
-    label: "Percentage",
-    selectPlaceholder: "Select percentage",
+    label: "Coverage",
+    selectPlaceholder: "Select coverage",
     values: [100, 75, 50, 25].map(value => ({
       label: `${value}%`,
       value,
