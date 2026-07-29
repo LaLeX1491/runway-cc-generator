@@ -68,11 +68,11 @@ const { selectedRunways } = storeToRefs(store);
               </AccordionItem>
               <AccordionItem value="vatis">
                 <AccordionTrigger>How to put the RWYCC in my atis?</AccordionTrigger>
-                <AccordionContent>Paste the result in the airport conditions window of vATIS.<img src="/vatis-example.png" class="mt-2 border-2 rounded-md"></AccordionContent>
+                <AccordionContent>Paste the result in the airport conditions window of vATIS.<img src="/vatis-example.png" class="mt-2 border-2 rounded-md" alt="vatis explanation"></AccordionContent>
               </AccordionItem>
               <AccordionItem value="dmhs">
                 <AccordionTrigger>Stil unsure? Use the decision making helpsheet.</AccordionTrigger>
-                <AccordionContent><img src="/decision-making-helpsheet.png"></AccordionContent>
+                <AccordionContent><img src="/decision-making-helpsheet.png" alt="Decision making helpsheet"></AccordionContent>
               </AccordionItem>
             </Accordion>
           </AccordionContent>

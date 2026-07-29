@@ -35,7 +35,7 @@ function toggleTheme() {
     <div class="mx-auto max-w-4xl space-y-6">
       <section class="flex items-center gap-2">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900 shadow-sm">
-          <img src="/logo.webp" class="p-1 m-2 rounded-lg">
+          <img src="/logo.webp" loading="lazy" width="40" height="40" decoding="async" class="p-1 m-2 rounded-lg" alt="vatger logo">
         </div>
         <div>
           <h1 class="text-3xl font-bold">
