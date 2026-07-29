@@ -50,7 +50,6 @@ const adValues: AdValue[] = [
     label: "Deposit",
     selectPlaceholder: "Select deposit",
     values: [
-      "dry",
       "wet",
       "frost",
       "slush",
@@ -102,16 +101,28 @@ watch(
     (state) => {
       for (const zone of runwayZones) {
         const draft = state[zone.key];
-        if (
-            draft.conditionCode !== undefined &&
-            draft.deposit !== undefined &&
-            draft.coverage !== undefined
-        ) {
-          setCondition(props.runway, zone.key, {
-            conditionCode: Number(draft.conditionCode),
-            deposit: draft.deposit as Deposit,
-            coverage: Number(draft.coverage),
-          });
+
+        if (draft.conditionCode !== undefined) {
+          const code = Number(draft.conditionCode);
+
+          if (code === 6) {
+            draft.deposit = "dry";
+            draft.coverage = 100;
+          } else if (code !== 6 && draft.deposit === "dry" && draft.coverage === 100) {
+            delete draft.deposit;
+            delete draft.coverage;
+          }
+
+          if (
+              draft.deposit !== undefined &&
+              draft.coverage !== undefined
+          ) {
+            setCondition(props.runway, zone.key, {
+              conditionCode: code,
+              deposit: draft.deposit as Deposit,
+              coverage: Number(draft.coverage),
+            });
+          }
         }
       }
     },
@@ -158,28 +169,32 @@ function isEzActive(condition: RunwayCondition) {
           {{ zone.label }}
         </h1>
         <Separator />
-        <div
+        <template
             v-for="field in adValues"
             :key="field.label"
-            class="my-2"
         >
-          <Label class="text-sm">{{ field.label }}</Label>
-          <Select v-model="adState[zone.key][field.key]">
-            <SelectTrigger class="w-full">
-              <SelectValue :placeholder="field.selectPlaceholder" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                  v-for="option in field.values"
-                  :key="option.value"
-                  :value="option.value"
-              >
-                {{ option.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <Separator class="my-2" />
-        </div>
+          <div
+                v-if="!(field.key !== 'conditionCode' && adState[zone.key].conditionCode === 6)"
+                class="my-2"
+            >
+            <Label class="text-sm">{{ field.label }}</Label>
+            <Select v-model="adState[zone.key][field.key]">
+              <SelectTrigger class="w-full">
+                <SelectValue :placeholder="field.selectPlaceholder" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                    v-for="option in field.values"
+                    :key="option.value"
+                    :value="option.value"
+                >
+                  {{ option.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Separator class="my-2" />
+          </div>
+        </template>
       </div>
     </div>
   </section>
