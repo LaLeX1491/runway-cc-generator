@@ -14,14 +14,14 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 
 import airportsData from "@/data/airports.json";
 import type { Airport } from "@/types/airport";
-import { useRunwayStore } from "@/stores/runway-conditions";
+import { useRunwayConditionStore } from "@/stores/runway-conditions";
 import Time from '@/components/Time.vue';
 import RunwaySelector from '@/components/RunwaySelector.vue';
 
 const airports = airportsData as Record<string, Airport>;
 const airportOptions = Object.values(airports);
 
-const store = useRunwayStore();
+const store = useRunwayConditionStore();
 </script>
 
 <template>

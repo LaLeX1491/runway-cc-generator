@@ -7,7 +7,7 @@ import {Button} from '@/components/ui/button';
 import {ArrowLeftRightIcon} from "lucide-vue-next";
 import {Tooltip, TooltipTrigger, TooltipContent} from '@/components/ui/tooltip';
 import RunwayConditionForm from '@/components/condition-form/RunwayConditionForm.vue';
-import {useRunwayStore} from '@/stores/runway-conditions.ts';
+import {useRunwayConditionStore} from '@/stores/runway-conditions.ts';
 import {storeToRefs} from 'pinia';
 
 
@@ -17,7 +17,7 @@ function toggleMode() {
   mode.value = mode.value === "ez" ? "ad" : "ez";
 }
 
-const store = useRunwayStore();
+const store = useRunwayConditionStore();
 
 const { selectedRunways } = storeToRefs(store);
 

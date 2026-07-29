@@ -6,12 +6,12 @@ import RunwayConditionFormWrapper from "@/components/condition-form/RunwayCondit
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "lucide-vue-next";
-import { useRunwayStore } from "@/stores/runway-conditions";
+import { useRunwayConditionStore } from "@/stores/runway-conditions";
 import {storeToRefs} from 'pinia';
 import {useColorMode} from '@vueuse/core';
 import {ref} from 'vue';
 
-const store = useRunwayStore();
+const store = useRunwayConditionStore();
 
 const { conditionString } = storeToRefs(store);
 

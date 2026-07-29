@@ -2,7 +2,7 @@
 import { watch } from "vue";
 
 import { Button } from "@/components/ui/button";
-import { useRunwayStore } from "@/stores/runway-conditions.ts";
+import { useRunwayConditionStore } from "@/stores/runway-conditions.ts";
 import {storeToRefs} from 'pinia';
 
 
@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 
-const store = useRunwayStore();
+const store = useRunwayConditionStore();
 
 const { selectedRunways } = storeToRefs(store);
 

@@ -2,7 +2,7 @@
 
 import {Button} from '@/components/ui/button';
 import type {RunwayCondition} from '@/types/conditions.ts';
-import {useRunwayStore} from '@/stores/runway-conditions.ts';
+import {useRunwayConditionStore} from '@/stores/runway-conditions.ts';
 import {storeToRefs} from 'pinia';
 import {Separator} from "@/components/ui/separator"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
@@ -72,9 +72,9 @@ const adValues: AdValue[] = [
 
 const runwayZones = ["TDZ", "MID", "END"]
 
-const store = useRunwayStore();
+const store = useRunwayConditionStore();
 
-const { setCondition } = useRunwayStore();
+const { setCondition } = useRunwayConditionStore();
 const { conditions } = storeToRefs(store);
 
 </script>

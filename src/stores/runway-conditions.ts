@@ -5,7 +5,13 @@ import type { RunwayCondition } from "@/types/conditions";
 
 import { generate } from "@/lib/generator";
 
-export const useRunwayStore = defineStore("runwayConditions", () => {
+export type RunwayConditions = {
+  tdz: RunwayCondition;
+  mid: RunwayCondition;
+  end: RunwayCondition;
+}
+
+export const useRunwayConditionStore = defineStore("runwayConditions", () => {
   const airport = ref<Airport | null>(null);
   const metar = ref<string | null>(null);
   const runways = ref<string[]>([]);
