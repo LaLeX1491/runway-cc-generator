@@ -1,7 +1,7 @@
 type RunwayCondition = {
   conditionCode: number,
   deposit: Deposit,
-  percentage: number,
+  coverage: number,
   time?: string | undefined,
 }
 

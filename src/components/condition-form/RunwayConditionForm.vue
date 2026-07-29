@@ -15,10 +15,10 @@ const props = defineProps<{
 }>();
 
 const ezValues: {label: string, value: string, condition: RunwayCondition}[] = [
-  { label: "Dry", value: "dry", condition: { conditionCode: 6, deposit: "dry", percentage: 100 }},
-  { label: "Wet", value: "wet", condition: { conditionCode: 5, deposit: "wet", percentage: 100 }},
-  { label: "Snow", value: "snow", condition: { conditionCode: 5, deposit: "dry_snow", percentage: 100 }},
-  { label: "Slippery Wet", value: "slipwet", condition: { conditionCode: 3, deposit: "slippery_wet", percentage: 100 }}
+  { label: "Dry", value: "dry", condition: { conditionCode: 6, deposit: "dry", coverage: 100 }},
+  { label: "Wet", value: "wet", condition: { conditionCode: 5, deposit: "wet", coverage: 100 }},
+  { label: "Snow", value: "snow", condition: { conditionCode: 5, deposit: "dry_snow", coverage: 100 }},
+  { label: "Slippery Wet", value: "slipwet", condition: { conditionCode: 3, deposit: "slippery_wet", coverage: 100 }}
 ]
 
 type SelectOption = {
@@ -26,7 +26,7 @@ type SelectOption = {
   value: string | number;
 };
 
-type AdFieldKey = "conditionCode" | "deposit" | "percentage";
+type AdFieldKey = "conditionCode" | "deposit" | "coverage";
 
 type AdValue = {
   key: AdFieldKey;
@@ -68,7 +68,7 @@ const adValues: AdValue[] = [
     })),
   },
   {
-    key: "percentage",
+    key: "coverage",
     label: "Percentage",
     selectPlaceholder: "Select percentage",
     values: [100, 75, 50, 25].map(value => ({
@@ -105,12 +105,12 @@ watch(
         if (
             draft.conditionCode !== undefined &&
             draft.deposit !== undefined &&
-            draft.percentage !== undefined
+            draft.coverage !== undefined
         ) {
           setCondition(props.runway, zone.key, {
             conditionCode: Number(draft.conditionCode),
             deposit: draft.deposit as Deposit,
-            percentage: Number(draft.percentage),
+            coverage: Number(draft.coverage),
           });
         }
       }

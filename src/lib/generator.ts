@@ -29,7 +29,7 @@ function formatCondition(condition?: RunwayCondition): string {
     .replaceAll("_", " ")
     .toUpperCase();
 
-  return `RWYCC ${condition.conditionCode} DEPOSIT ${deposit} ${condition.percentage} PCT`;
+  return `RWYCC ${condition.conditionCode} DEPOSIT ${deposit} ${condition.coverage} PCT`;
 }
 
 
@@ -83,9 +83,9 @@ export function generate(
     if (!(isDry(tdz) && isDry(mid) && isDry(end))) {
       out += ` DEPOSIT`;
 
-      out += ` TDZ ${tdz.deposit.replaceAll("_", " ").toUpperCase()} ${tdz.percentage} PCT`;
-      out += ` MID ${mid.deposit.replaceAll("_", " ").toUpperCase()} ${mid.percentage} PCT`;
-      out += ` END ${end.deposit.replaceAll("_", " ").toUpperCase()} ${end.percentage} PCT`;
+      out += ` TDZ ${tdz.deposit.replaceAll("_", " ").toUpperCase()} ${tdz.coverage} PCT`;
+      out += ` MID ${mid.deposit.replaceAll("_", " ").toUpperCase()} ${mid.coverage} PCT`;
+      out += ` END ${end.deposit.replaceAll("_", " ").toUpperCase()} ${end.coverage} PCT`;
     } else {
       out += ` DRY`;
     }
