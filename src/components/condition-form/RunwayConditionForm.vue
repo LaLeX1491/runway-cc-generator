@@ -169,14 +169,18 @@ const isEzIncomplete = computed(() => {
   return !stored || !stored.tdz;
 });
 
-// Advanced mode: a zone is incomplete once the user picked a conditionCode
-// but hasn't finished deposit/coverage yet.
+// Advanced mode: a zone is incomplete if ANY of conditionCode, deposit, or
+// coverage is missing — including the case where nothing has been touched
+// at all (conditionCode itself never selected).
 function isZoneIncomplete(zone: RunwayZoneKey): boolean {
   const draft = adState[zone];
 
-  if (draft.conditionCode === undefined || draft.conditionCode === null) return false;
-
-  return draft.deposit === undefined || draft.coverage === undefined;
+  return (
+      draft.conditionCode === undefined ||
+      draft.conditionCode === null ||
+      draft.deposit === undefined ||
+      draft.coverage === undefined
+  );
 }
 
 const incompleteZones = computed(() =>
@@ -185,6 +189,15 @@ const incompleteZones = computed(() =>
 
 const showEzWarning = computed(() => submitted.value && isEzIncomplete.value);
 const showAdWarning = computed(() => submitted.value && incompleteZones.value.length > 0);
+
+// Whether a field (deposit/coverage) should be visually hidden for this zone.
+// Uses v-show (not v-if) on the field markup below so the mounted Select /
+// its teleported dropdown content is never abruptly removed from the DOM —
+// removing it while Reka UI's popper/teleport is still animating out causes
+// a Vue "insertBefore on null" crash.
+function isFieldHidden(zone: RunwayZoneKey, fieldKey: AdFieldKey): boolean {
+  return fieldKey !== "conditionCode" && adState[zone].conditionCode === 6;
+}
 
 </script>
 
@@ -206,7 +219,7 @@ const showAdWarning = computed(() => submitted.value && incompleteZones.value.le
           class="grow basis-[calc(50%-0.25rem)] sm:basis-0"
           :class="isEzActive(value.condition)
             ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'
-            : (showEzWarning ? '!border-amber-500' : '')"
+            : (showEzWarning ? '!border-amber-500/30' : '')"
           @click="setEasyCondition(runway, value.condition)"
       >
         {{value.label}}
@@ -220,7 +233,7 @@ const showAdWarning = computed(() => submitted.value && incompleteZones.value.le
     >
       <TriangleAlertIcon class="size-4 shrink-0" />
       <span>
-        Please complete deposit and coverage for {{ incompleteZones.map(z => z.label).join(", ") }} — this runway will be skipped from the report until then.
+        Please complete {{ incompleteZones.map(z => z.label).join(", ") }} — this runway will be skipped from the report until then.
       </span>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -229,8 +242,7 @@ const showAdWarning = computed(() => submitted.value && incompleteZones.value.le
           :key="zone.key"
           class="p-2"
           :class="[
-            idx !== 2 ? 'border-b sm:border-b-0 sm:border-r' : '',
-            submitted && isZoneIncomplete(zone.key) ? 'bg-amber-500/5 rounded-md' : '',
+            idx !== 2 ? 'sm:border-r' : '',
           ]"
       >
         <h1 class="text-center font-black text-xl pb-2 flex items-center justify-center gap-1">
@@ -243,15 +255,15 @@ const showAdWarning = computed(() => submitted.value && incompleteZones.value.le
             :key="field.label"
         >
           <div
-              v-if="!(field.key !== 'conditionCode' && adState[zone.key].conditionCode === 6)"
+              v-show="!isFieldHidden(zone.key, field.key)"
               class="my-2"
           >
             <Label class="text-sm">{{ field.label }}</Label>
             <Select v-model="adState[zone.key][field.key]">
               <SelectTrigger
                   class="w-full"
-                  :class="submitted && adState[zone.key].conditionCode !== undefined && adState[zone.key][field.key] === undefined
-                  ? '!border-amber-500 focus-visible:ring-amber-500/50'
+                  :class="submitted && adState[zone.key][field.key] === undefined
+                  ? '!border-amber-500/30'
                   : ''"
               >
                 <SelectValue :placeholder="field.selectPlaceholder" />
