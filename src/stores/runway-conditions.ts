@@ -18,6 +18,7 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
 
     selectedRunways.value = [];
     conditions.value = {};
+    conditionString.value = null;
     metar.value = null;
     runways.value = [];
 
@@ -57,8 +58,14 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
     };
   }
 
+  function clearConditions() {
+    conditions.value = {};
+    conditionString.value = null;
+  }
+
   function generateConditionString() {
-    conditionString.value = generate(conditions.value) ?? null;
+    const result = generate(conditions.value);
+    conditionString.value = result && result.trim().length > 0 ? result : null;
   }
 
   return {
@@ -73,6 +80,7 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
     setRunways,
     setCondition,
     setEasyCondition,
+    clearConditions,
     generateConditionString,
   };
 });
