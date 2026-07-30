@@ -96,9 +96,33 @@ const adState = reactive<Record<RunwayZoneKey, Partial<Record<AdFieldKey, number
   end: {},
 });
 
+let hydrating = false;
+
+watch(
+    () => props.runway,
+    (runway) => {
+      hydrating = true;
+
+      const stored = conditions.value[runway];
+
+      for (const zone of runwayZones) {
+        const zoneCondition = stored?.[zone.key];
+
+        adState[zone.key] = zoneCondition
+            ? { ...zoneCondition }
+            : {};
+      }
+
+      hydrating = false;
+    },
+    { immediate: true },
+);
+
 watch(
     adState,
     (state) => {
+      if (hydrating) return;
+
       for (const zone of runwayZones) {
         const draft = state[zone.key];
 
@@ -174,9 +198,9 @@ function isEzActive(condition: RunwayCondition) {
             :key="field.label"
         >
           <div
-                v-if="!(field.key !== 'conditionCode' && adState[zone.key].conditionCode === 6)"
-                class="my-2"
-            >
+              v-if="!(field.key !== 'conditionCode' && adState[zone.key].conditionCode === 6)"
+              class="my-2"
+          >
             <Label class="text-sm">{{ field.label }}</Label>
             <Select v-model="adState[zone.key][field.key]">
               <SelectTrigger class="w-full">

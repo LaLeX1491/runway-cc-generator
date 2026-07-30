@@ -14,14 +14,14 @@ import {CircleQuestionMarkIcon} from 'lucide-vue-next';
 
 const mode = ref<"ez" | "ad">("ez");
 
-function toggleMode() {
-  mode.value = mode.value === "ez" ? "ad" : "ez";
-}
-
 const store = useRunwayConditionStore();
 
 const { selectedRunways } = storeToRefs(store);
 
+function toggleMode() {
+  mode.value = mode.value === "ez" ? "ad" : "ez";
+  store.clearConditions();
+}
 </script>
 
 <template>
@@ -83,9 +83,9 @@ const { selectedRunways } = storeToRefs(store);
     <CardContent>
       <Tabs v-if="selectedRunways.length > 0">
         <TabsList class="w-full">
-          <TabsTrigger v-for="runway in selectedRunways" :value="runway">Runway {{runway}}</TabsTrigger>
+          <TabsTrigger v-for="runway in selectedRunways" :key="runway" :value="runway">Runway {{runway}}</TabsTrigger>
         </TabsList>
-        <TabsContent v-for="runway in selectedRunways" :value="runway">
+        <TabsContent v-for="runway in selectedRunways" :key="runway" :value="runway">
           <RunwayConditionForm :runway="runway" :mode="mode" />
         </TabsContent>
       </Tabs>
