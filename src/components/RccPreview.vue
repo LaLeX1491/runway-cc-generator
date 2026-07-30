@@ -18,12 +18,10 @@ function copyToClipboard() {
 
 <template>
   <Card :class="code ? 'cursor-pointer' : ''" @click="copyToClipboard">
-    <CardContent>
+    <CardContent class="text-center">
       <Tooltip v-if="code">
         <TooltipTrigger>
-          <p
-              class="font-mono text-xl font-bold"
-          >
+          <p class="font-mono text-xl font-bold whitespace-pre-line">
             {{ code }}
           </p>
         </TooltipTrigger>
@@ -32,7 +30,7 @@ function copyToClipboard() {
 
       <p
           v-else
-          class="text-muted-foreground text-center"
+          class="text-muted-foreground"
       >
         No RCC generated yet.
       </p>
