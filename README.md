@@ -13,4 +13,5 @@ Small web app to generate runway condition codes for the ATISes (mostly used dur
 ## Running the Application
 1. run ``npm install``
 2. run ``npm run dev``
-3. Have fun generating crazy condition codes 😉
+3. Open browser: http://localhost:5173
+4. Have fun generating crazy condition codes 😉
