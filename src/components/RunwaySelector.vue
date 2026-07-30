@@ -86,12 +86,12 @@ watch(
 
 
 <template>
-  <div class="flex gap-2">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
     <Button
         v-for="runway in availableRunways()"
         :key="runway"
         variant="outline"
-        class="grow"
+        class="w-full"
         :class="[
         selectedRunways.includes(runway)
           ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'

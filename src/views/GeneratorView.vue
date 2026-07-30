@@ -31,25 +31,25 @@ function toggleTheme() {
 </script>
 
 <template>
-  <main class="min-h-screen bg-muted/40 p-8">
+  <main class="min-h-screen bg-muted/40 p-4 sm:p-8">
     <div class="mx-auto max-w-4xl space-y-6">
       <section class="flex items-center gap-2">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900 shadow-sm">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-900 shadow-sm">
           <img src="/logo.webp" loading="lazy" width="40" height="40" decoding="async" class="p-1 m-2 rounded-lg" alt="vatger logo">
         </div>
-        <div>
-          <h1 class="text-3xl font-bold">
-            Runway Condition Code Generator
+        <div class="min-w-0 flex-1">
+          <h1 class="text-2xl sm:text-3xl font-bold break-words">
+            RCC Generator
           </h1>
 
-          <p class="text-muted-foreground">
+          <p class="text-muted-foreground text-sm sm:text-base">
             Generate ICAO runway condition reports for <a class="underline text-blue-600" href="https://vatis.app" target="_blank">vATIS</a>.
           </p>
         </div>
         <Button
             variant="ghost"
             size="icon"
-            class="ml-auto"
+            class="shrink-0"
             @click="toggleTheme"
         >
           <SunIcon v-if="mode === 'dark'" class="h-5 w-5" />
@@ -69,6 +69,7 @@ function toggleTheme() {
 
         <Button
             size="lg"
+            class="w-full sm:w-auto"
             @click="generate"
         >
           <span v-if="generations === 0">Generate RCC</span>
@@ -89,8 +90,8 @@ function toggleTheme() {
 
       </div>
     </div>
-    <footer class="text-center mt-4 text-sm text-muted-foreground items-center">
-      <a href="https://vatsim-germany.org/policies/gdpr" class="hover:underline" target="_blank">GDPR</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://vatsim-germany.org/policies/imprint" class="hover:underline" target="_blank">Imprint</a>
+    <footer class="text-center mt-4 text-xs sm:text-sm text-muted-foreground flex flex-wrap justify-center gap-x-2">
+      <a href="https://vatsim-germany.org/policies/gdpr" class="hover:underline" target="_blank">GDPR</a><span>|</span><a href="https://vatsim-germany.org/policies/imprint" class="hover:underline" target="_blank">Imprint</a>
     </footer>
   </main>
 </template>

@@ -18,10 +18,10 @@ function copyToClipboard() {
 
 <template>
   <Card :class="code ? 'cursor-pointer' : ''" @click="copyToClipboard">
-    <CardContent class="text-center">
+    <CardContent class="text-center px-2 sm:px-6">
       <Tooltip v-if="code">
-        <TooltipTrigger>
-          <p class="font-mono text-xl font-bold whitespace-pre-line">
+        <TooltipTrigger class="w-full">
+          <p class="font-mono text-base sm:text-xl font-bold whitespace-pre-line break-words">
             {{ code }}
           </p>
         </TooltipTrigger>

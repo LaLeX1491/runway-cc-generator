@@ -165,13 +165,13 @@ function isEzActive(condition: RunwayCondition) {
 
 <template>
   <section v-if="mode == 'ez'">
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
       <Button
           v-for="value in ezValues"
           variant="outline"
           :key="value.label"
           :value="value.label"
-          class="grow"
+          class="grow basis-[calc(50%-0.25rem)] sm:basis-0"
           :class="isEzActive(value.condition)
           ? '!border-primary bg-primary/10 dark:bg-primary/20 !px-5'
           : ''"
@@ -182,12 +182,12 @@ function isEzActive(condition: RunwayCondition) {
     </div>
   </section>
   <section v-else>
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-1 sm:grid-cols-3">
       <div
           v-for="(zone, idx) in runwayZones"
           :key="zone.key"
           class="p-2"
-          :class="idx !== 2 ? 'border-r' : ''"
+          :class="idx !== 2 ? 'border-b sm:border-b-0 sm:border-r' : ''"
       >
         <h1 class="text-center font-black text-xl pb-2">
           {{ zone.label }}
