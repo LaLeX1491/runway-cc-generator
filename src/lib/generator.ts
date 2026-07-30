@@ -83,16 +83,18 @@ export function generate(input: Record<string, RunwayConditions>): string | unde
   const blocks: string[] = [];
 
   for (const [runway, condition] of Object.entries(input)) {
-    const lines = [
+    // All parts of a single runway's report stay on one line (space-separated).
+    // Line breaks are only inserted between different runways (see join below).
+    const parts = [
       `RWY COND RWY ${runway} AT TIME ${time}`,
       buildRwyccLine(condition),
     ];
 
     const depositLine = buildDepositLine(condition);
-    if (depositLine) lines.push(depositLine);
+    if (depositLine) parts.push(depositLine);
 
-    blocks.push(lines.join("\n"));
+    blocks.push(parts.join(" "));
   }
 
-  return blocks.join("\n\n");
+  return blocks.join("\n");
 }
