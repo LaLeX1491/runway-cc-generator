@@ -13,6 +13,9 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
   const conditions = ref<Record<string, RunwayConditions>>({});
   const conditionString = ref<string | null>(null);
 
+  // Tracks whether the user has attempted to generate a report at least once.
+  const submitted = ref(false);
+
   async function setAirport(value: Airport | null) {
     airport.value = value;
 
@@ -21,6 +24,7 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
     conditionString.value = null;
     metar.value = null;
     runways.value = [];
+    submitted.value = false;
 
     if (!value) return;
 
@@ -61,9 +65,12 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
   function clearConditions() {
     conditions.value = {};
     conditionString.value = null;
+    submitted.value = false;
   }
 
   function generateConditionString() {
+    submitted.value = true;
+
     const result = generate(conditions.value);
     conditionString.value = result && result.trim().length > 0 ? result : null;
   }
@@ -75,6 +82,7 @@ export const useRunwayConditionStore = defineStore("runwayConditions", () => {
     selectedRunways,
     conditions,
     conditionString,
+    submitted,
 
     setAirport,
     setRunways,

@@ -16,6 +16,35 @@ function formatDeposit(input: Deposit): string {
   return input.replaceAll("_", " ").toUpperCase();
 }
 
+// A single third is only usable once conditionCode, deposit, AND coverage
+// are all present. code=6 (dry) still requires deposit/coverage to be set
+// (the store is expected to auto-fill "dry"/100 in that case), so this
+// check stays uniform across all condition codes.
+function isSectionComplete(section: Condition | undefined | null): section is Condition {
+  return (
+    !!section &&
+    section.conditionCode !== undefined &&
+    section.conditionCode !== null &&
+    section.deposit !== undefined &&
+    section.deposit !== null &&
+    section.coverage !== undefined &&
+    section.coverage !== null
+  );
+}
+
+// A condition is only usable once all three thirds have been fully set
+// with conditionCode, deposit, AND coverage. Partially filled state
+// (e.g. only conditionCode chosen, deposit/coverage still empty) must
+// never reach the line builders below, since they assume every field exists.
+function isComplete(cond: RunwayConditions | undefined | null): cond is RunwayConditions {
+  return (
+    !!cond &&
+    isSectionComplete(cond.tdz) &&
+    isSectionComplete(cond.mid) &&
+    isSectionComplete(cond.end)
+  );
+}
+
 function sameCC(cond: RunwayConditions): boolean {
   return cond.tdz.conditionCode === cond.mid.conditionCode && cond.tdz.conditionCode === cond.end.conditionCode;
 }
@@ -41,8 +70,7 @@ function getSections(cond: RunwayConditions): Array<[Section, Condition]> {
 // since two thirds can share the same deposit but still report a different RWYCC.
 function buildRwyccLine(cond: RunwayConditions): string {
   if (sameCC(cond)) {
-    const cc = cond.tdz.conditionCode;
-    return cc === 6 ? `RWYCC 6 DRY` : `RWYCC ${cc}`;
+    return `RWYCC ${cond.tdz.conditionCode}`;
   }
 
   return `RWYCC ${getSections(cond)
@@ -83,6 +111,11 @@ export function generate(input: Record<string, RunwayConditions>): string | unde
   const blocks: string[] = [];
 
   for (const [runway, condition] of Object.entries(input)) {
+    // Skip runways whose condition isn't fully filled out yet (missing
+    // conditionCode, deposit, or coverage on any third) instead of throwing —
+    // a partially configured runway simply doesn't contribute a block.
+    if (!isComplete(condition)) continue;
+
     // All parts of a single runway's report stay on one line (space-separated).
     // Line breaks are only inserted between different runways (see join below).
     const parts = [
@@ -95,6 +128,8 @@ export function generate(input: Record<string, RunwayConditions>): string | unde
 
     blocks.push(parts.join(" "));
   }
+
+  if (blocks.length === 0) return;
 
   return blocks.join("\n");
 }
