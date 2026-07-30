@@ -19,8 +19,27 @@ import { useRunwayConditionStore } from "@/stores/runway-conditions";
 import Time from '@/components/Time.vue';
 import RunwaySelector from '@/components/RunwaySelector.vue';
 
-const airports = airportsData as Record<string, Airport>;
-const airportOptions = Object.values(airports);
+type RawAirport = {
+  label: string;
+  runways: string[];
+};
+
+type FirGroup = {
+  fir: string;
+  airports: Airport[];
+};
+
+type RawAirportsData = Record<string, Record<string, RawAirport>>;
+const rawData = airportsData as RawAirportsData;
+
+const firGroups: FirGroup[] = Object.entries(rawData).map(([fir, airports]) => ({
+  fir,
+  airports: Object.entries(airports).map(([icao, airport]) => ({
+    icao,
+    label: airport.label,
+    runways: airport.runways,
+  })),
+}));
 
 const store = useRunwayConditionStore();
 
@@ -46,17 +65,16 @@ function onAirportChange(value: AcceptableValue) {
           </SelectTrigger>
 
           <SelectContent>
-            <SelectGroup>
-              <SelectLabel>FIR EDWW</SelectLabel>
+            <SelectGroup v-for="group in firGroups" :key="group.fir">
+              <SelectLabel>FIR {{ group.fir }}</SelectLabel>
 
               <SelectItem
-                  v-for="airport in airportOptions"
+                  v-for="airport in group.airports"
                   :key="airport.icao"
                   :value="airport"
               >
                 {{ airport.label }}
               </SelectItem>
-
             </SelectGroup>
           </SelectContent>
         </Select>
