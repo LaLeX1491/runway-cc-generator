@@ -2,7 +2,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Badge} from '@/components/ui/badge';
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import {Button} from '@/components/ui/button';
 import {ArrowLeftRightIcon} from "lucide-vue-next";
 import {Tooltip, TooltipTrigger, TooltipContent} from '@/components/ui/tooltip';
@@ -12,11 +12,22 @@ import {storeToRefs} from 'pinia';
 import {Accordion, AccordionItem, AccordionTrigger, AccordionContent} from '@/components/ui/accordion';
 import {CircleQuestionMarkIcon} from 'lucide-vue-next';
 
-const mode = ref<"ez" | "ad">("ez");
+const FORM_MODE_KEY = "rcc-form-mode";
+
+function loadMode(): "ez" | "ad" {
+  const stored = localStorage.getItem(FORM_MODE_KEY);
+  return stored === "ad" ? "ad" : "ez";
+}
+
+const mode = ref<"ez" | "ad">(loadMode());
 
 const store = useRunwayConditionStore();
 
 const { selectedRunways } = storeToRefs(store);
+
+watch(mode, (value) => {
+  localStorage.setItem(FORM_MODE_KEY, value);
+});
 
 function toggleMode() {
   mode.value = mode.value === "ez" ? "ad" : "ez";
