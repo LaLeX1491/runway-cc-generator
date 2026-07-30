@@ -162,16 +162,11 @@ function isEzActive(condition: RunwayCondition) {
   );
 }
 
-// Easy mode: incomplete simply means "nothing picked yet" for this runway.
-// Reads directly from the store (source of truth), not local component state.
 const isEzIncomplete = computed(() => {
   const stored = conditions.value[props.runway];
   return !stored || !stored.tdz;
 });
 
-// Advanced mode: a zone is incomplete if ANY of conditionCode, deposit, or
-// coverage is missing — including the case where nothing has been touched
-// at all (conditionCode itself never selected).
 function isZoneIncomplete(zone: RunwayZoneKey): boolean {
   const draft = adState[zone];
 
@@ -190,11 +185,6 @@ const incompleteZones = computed(() =>
 const showEzWarning = computed(() => submitted.value && isEzIncomplete.value);
 const showAdWarning = computed(() => submitted.value && incompleteZones.value.length > 0);
 
-// Whether a field (deposit/coverage) should be visually hidden for this zone.
-// Uses v-show (not v-if) on the field markup below so the mounted Select /
-// its teleported dropdown content is never abruptly removed from the DOM —
-// removing it while Reka UI's popper/teleport is still animating out causes
-// a Vue "insertBefore on null" crash.
 function isFieldHidden(zone: RunwayZoneKey, fieldKey: AdFieldKey): boolean {
   return fieldKey !== "conditionCode" && adState[zone].conditionCode === 6;
 }
